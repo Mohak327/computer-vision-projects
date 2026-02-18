@@ -1,49 +1,5 @@
 # RGB Image Merging - HW2 Specification
 
-## Project Overview
-Computer vision project implementing a complete 5-step panoramic image stitching pipeline:
-1. Harris Corner Detection
-2. Non-Maximal Suppression (NMS)
-3. Feature Descriptor Extraction (MOPS-like)
-4. Feature Matching (Lowe's ratio test)
-5. RANSAC Homography & Multi-Image Panorama Creation
-
-The pipeline supports stitching 2+ images into seamless panoramas with proper alignment and alpha blending.
-
-## Assignment Structure
-
-### Step 0: Taking Photos (0 points, Required)
-**Objective:** Capture 2 photos for panoramic stitching
-
-**Requirements:**
-- Take 2 photos as you would for a panorama
-- Keep camera level - only rotate, do NOT translate
-- Lock exposure between shots
-- Lock focus between shots
-- Ensure consistent lighting conditions
-
-**Deliverables:**
-- 2 source images ready for processing
-
----
-
-### Step 1: Harris Corner Detection (5 points)
-**Objective:** Implement Harris Interest Point Detector
-
-**Technical Requirements:**
-- Use Harris Interest Point Detector (Section 2)
-- Single scale implementation (no multi-scale)
-- Sub-pixel accuracy not required
-- Can use provided sample code: `harris.py`
-
-**Implementation Notes:**
-- Start with basic Harris corner detection
-- Expected output: ~5000+ corner points per image
-
-**Deliverables:**
-1. Show 2 original images side-by-side
-2. Show detected corners overlaid on both images side-by-side
-
 ---
 
 ## Project Structure
