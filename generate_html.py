@@ -1,0 +1,342 @@
+import os
+import glob
+
+def generate_html_report(output_folder="output/tajm", output_file="panorama_results.html"):
+    """Generate an HTML presentation of the panorama stitching results."""
+    
+    # Count number of image pairs
+    match_files = glob.glob(os.path.join(output_folder, "step4_matches_pair_*.png"))
+    num_pairs = len(match_files)
+    
+    # Generate match sections HTML
+    match_sections = ""
+    for i in range(1, num_pairs + 1):
+        match_sections += f"""
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px;">Image Pair {i}-{i+1}</h3>
+                <div class="full-width-image">
+                    <img src="{output_folder}/step4_nnr_histogram_pair_{i}_{i+1}.png" alt="NNR Histogram Pair {i}-{i+1}">
+                    <p>NNR Distribution showing feature match quality</p>
+                </div>
+                <div class="full-width-image">
+                    <img src="{output_folder}/step4_matches_pair_{i}_{i+1}.png" alt="Feature Matches Pair {i}-{i+1}">
+                    <p>Matched feature correspondences between images {i} and {i+1}</p>
+                </div>
+            </div>
+"""
+    
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panoramic Image Stitching - Computer Vision Pipeline</title>
+    <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+        
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }}
+        
+        .container {{
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }}
+        
+        header {{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }}
+        
+        header h1 {{
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }}
+        
+        header p {{
+            font-size: 1.3em;
+            opacity: 0.95;
+        }}
+        
+        .pipeline-overview {{
+            background: #f8f9fa;
+            padding: 40px;
+            border-bottom: 3px solid #667eea;
+        }}
+        
+        .pipeline-overview h2 {{
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }}
+        
+        .pipeline-steps {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }}
+        
+        .step-card {{
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }}
+        
+        .step-card h3 {{
+            color: #667eea;
+            margin-bottom: 10px;
+        }}
+        
+        section {{
+            padding: 60px 40px;
+            border-bottom: 1px solid #e0e0e0;
+        }}
+        
+        section:last-child {{
+            border-bottom: none;
+        }}
+        
+        section h2 {{
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }}
+        
+        .step-number {{
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }}
+        
+        .description {{
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }}
+        
+        .full-width-image {{
+            margin-top: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }}
+        
+        .full-width-image img {{
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }}
+        
+        .full-width-image p {{
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1em;
+        }}
+        
+        .stats {{
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }}
+        
+        .stats h3 {{
+            color: #667eea;
+            margin-bottom: 15px;
+        }}
+        
+        .stat-item {{
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }}
+        
+        .stat-item:last-child {{
+            border-bottom: none;
+        }}
+        
+        footer {{
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9em;
+        }}
+        
+        @media (max-width: 768px) {{
+            header h1 {{
+                font-size: 2em;
+            }}
+            
+            section {{
+                padding: 40px 20px;
+            }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📸 Panoramic Image Stitching</h1>
+            <p>Computer Vision Project - Feature Detection & Matching Pipeline</p>
+        </header>
+        
+        <div class="pipeline-overview">
+            <h2>Pipeline Overview</h2>
+            <p class="description">This project implements a complete panoramic image stitching pipeline using computer vision techniques. The pipeline consists of five main stages:</p>
+            
+            <div class="pipeline-steps">
+                <div class="step-card">
+                    <h3>1. Harris Corner Detection</h3>
+                    <p>Detect interest points in images using the Harris corner detection algorithm.</p>
+                </div>
+                <div class="step-card">
+                    <h3>2. Non-Maximal Suppression</h3>
+                    <p>Filter detected corners to retain only the strongest local maxima.</p>
+                </div>
+                <div class="step-card">
+                    <h3>3. Feature Descriptors</h3>
+                    <p>Extract robust feature descriptors from detected corners for matching.</p>
+                </div>
+                <div class="step-card">
+                    <h3>4. Feature Matching</h3>
+                    <p>Match features between images using nearest neighbor distance ratio.</p>
+                </div>
+                <div class="step-card">
+                    <h3>5. RANSAC & Stitching</h3>
+                    <p>Estimate homography and create the final panorama with robust outlier rejection.</p>
+                </div>
+            </div>
+        </div>
+        
+        <section>
+            <h2><span class="step-number">1</span>Harris Corner Detection</h2>
+            <p class="description">
+                The first step detects interest points (corners) in each image using the Harris corner detector. 
+                Corners are ideal features because they are distinctive and can be reliably detected across different viewpoints.
+            </p>
+            <div class="full-width-image">
+                <img src="{output_folder}/step1_harris_corners.png" alt="Harris Corner Detection Results">
+                <p>Detected Harris corners across all input images</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2><span class="step-number">2</span>Non-Maximal Suppression (NMS)</h2>
+            <p class="description">
+                Non-maximal suppression filters the detected corners to keep only the strongest responses within local neighborhoods. 
+                This reduces the number of features while retaining the most distinctive ones, improving matching efficiency and accuracy.
+            </p>
+            <div class="full-width-image">
+                <img src="{output_folder}/step2_nms_corners.png" alt="NMS Results">
+                <p>Corners after Non-Maximal Suppression</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2><span class="step-number">3</span>Feature Descriptor Extraction</h2>
+            <p class="description">
+                For each detected corner, we extract a feature descriptor - a compact representation of the local image patch. 
+                These descriptors capture the appearance around each corner in a way that is robust to small changes in viewpoint and lighting.
+            </p>
+            <div class="full-width-image">
+                <img src="{output_folder}/step3_descriptors.png" alt="Feature Descriptors">
+                <p>Example feature descriptors (8×8 colored patches)</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2><span class="step-number">4</span>Feature Matching</h2>
+            <p class="description">
+                Features are matched between consecutive image pairs using the nearest neighbor distance ratio (NNR) test. 
+                This ratio compares the distance to the nearest neighbor versus the second nearest neighbor, helping to filter out ambiguous matches.
+            </p>
+            {match_sections}
+        </section>
+        
+        <section>
+            <h2><span class="step-number">5</span>RANSAC Homography & Final Panorama</h2>
+            <p class="description">
+                Using RANSAC (Random Sample Consensus), we robustly estimate the homography transformation between images, 
+                filtering out outlier matches. The images are then warped and blended together to create the final panoramic result.
+            </p>
+            
+            <div class="full-width-image">
+                <img src="{output_folder}/step5_panorama.png" alt="Final Panorama">
+                <p>🎉 Final Panoramic Result</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2>📊 Pipeline Statistics</h2>
+            <div class="stats">
+                <h3>Processing Summary</h3>
+                <div class="stat-item">
+                    <strong>Total Image Pairs Matched:</strong> {num_pairs}
+                </div>
+                <div class="stat-item">
+                    <strong>Feature Detection:</strong> Harris corner detector with NMS
+                </div>
+                <div class="stat-item">
+                    <strong>Descriptor Type:</strong> 8×8 color patches
+                </div>
+                <div class="stat-item">
+                    <strong>Matching Strategy:</strong> Nearest Neighbor Distance Ratio (threshold: 0.8)
+                </div>
+                <div class="stat-item">
+                    <strong>Transformation:</strong> Homography estimated via RANSAC
+                </div>
+                <div class="stat-item">
+                    <strong>Final Output:</strong> High-resolution panoramic image with alpha blending
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Computer Vision Project - Panoramic Image Stitching Pipeline</p>
+            <p>Generated on February 18, 2026</p>
+        </footer>
+    </div>
+</body>
+</html>"""
+    
+    # Write HTML file
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    
+    print(f"✓ HTML report generated: {output_file}")
+    print(f"  Found {num_pairs} image pairs in results")
+
+if __name__ == "__main__":
+    generate_html_report()
