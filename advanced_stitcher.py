@@ -4,9 +4,7 @@ Implements ANMS, RANSAC Homography, Panorama Creation, Rotation Invariance, and 
 """
 
 import numpy as np
-from scipy.ndimage import gaussian_filter, map_coordinates
-from scipy.spatial.distance import cdist
-import cv2
+from scipy.ndimage import map_coordinates
 
 
 class AdvancedStitcher:
@@ -294,8 +292,6 @@ class AdvancedStitcher:
             [0, 0, 1]
         ], dtype=float)
         
-        # Warp img2 with combined transformation
-        H_total = T @ H
         # Warp img2 with combined transformation
         H_total = T @ H
         warped_img2 = self.warp_image(img2, H_total, (output_h, output_w))

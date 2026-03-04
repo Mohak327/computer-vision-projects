@@ -4,7 +4,6 @@ Estimates transformation between images and aligns them.
 """
 
 import numpy as np
-from scipy.ndimage import affine_transform
 
 
 class ImageAligner:

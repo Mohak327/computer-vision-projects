@@ -4,7 +4,6 @@ Extracts feature descriptors around detected interest points.
 """
 
 import numpy as np
-from scipy.ndimage import gaussian_filter
 
 
 class FeatureDescriptor:
