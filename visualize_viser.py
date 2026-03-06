@@ -25,7 +25,7 @@ def _make_server(start_port: int = 8081, max_tries: int = 50):
     raise RuntimeError(f"Could not bind a Viser server port after {max_tries} attempts")
 
 
-def visualize_scene(npz_path: str, port: int = 8081):
+def visualize_scene(npz_path: str, port: int = 8081, block: bool = True):
     data = np.load(npz_path, allow_pickle=True)
 
     points_3d = data["points_3d"]
@@ -46,7 +46,7 @@ def visualize_scene(npz_path: str, port: int = 8081):
 
     server, actual_port = _make_server(port)
     print(f"Viser running at: http://localhost:{actual_port}")
-    print("Press Ctrl+C to stop")
+    print("Open the URL above in your browser.")
 
     # Initial camera look direction based on camera 1 reference
     cam0_forward = camera_poses[0][:3, 2]
@@ -177,11 +177,14 @@ def visualize_scene(npz_path: str, port: int = 8081):
         def _(_evt):
             baseline_handle.visible = bl_vis.value
 
-    try:
-        while True:
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        print("\nShutting down Viser server...")
+    if block:
+        try:
+            while True:
+                time.sleep(0.1)
+        except KeyboardInterrupt:
+            print("\nShutting down Viser server...")
+
+    return server
 
 
 def main():
@@ -195,7 +198,7 @@ def main():
         sys.exit(1)
 
     port = int(sys.argv[2]) if len(sys.argv) > 2 else 8081
-    visualize_scene(npz_path, port)
+    visualize_scene(npz_path, port, block=True)
 
 
 if __name__ == "__main__":
