@@ -322,6 +322,41 @@ def _compact_caption(i: int, metrics, rel_text: str, planarity: float, hint: str
     return base
 
 
+def _normalize_landmark_hints(landmark_hints, expected_count: int) -> list[str | None]:
+    """Normalize user hints to match screenshot count.
+
+    Accepts None, a single string, or an iterable of values. Empty values are
+    converted to None, and the list is padded/truncated to expected_count.
+    """
+    if expected_count <= 0:
+        return []
+
+    if landmark_hints is None:
+        hints = []
+    elif isinstance(landmark_hints, str):
+        hints = [landmark_hints]
+    else:
+        try:
+            hints = list(landmark_hints)
+        except TypeError:
+            hints = [str(landmark_hints)]
+
+    normalized: list[str | None] = []
+    for hint in hints:
+        if hint is None:
+            normalized.append(None)
+            continue
+        text = str(hint).strip()
+        normalized.append(text if text else None)
+
+    if len(normalized) < expected_count:
+        normalized.extend([None] * (expected_count - len(normalized)))
+    else:
+        normalized = normalized[:expected_count]
+
+    return normalized
+
+
 def generate_viser_captions(npz_path: str, viser_image_paths: list[str], landmark_hints: list[str] | None = None):
     data = np.load(npz_path, allow_pickle=True)
     points = data["points_3d"] if "points_3d" in data else np.zeros((0, 3))
@@ -332,13 +367,12 @@ def generate_viser_captions(npz_path: str, viser_image_paths: list[str], landmar
     rel = _baseline_text(c0, c1)
     planarity = _planarity_score(points) if len(points) > 0 else 1.0
 
-    if landmark_hints is None:
-        landmark_hints = [None] * len(viser_image_paths)
+    normalized_hints = _normalize_landmark_hints(landmark_hints, len(viser_image_paths))
 
     captions = []
     for i, img_path in enumerate(viser_image_paths):
         metrics = _analyze_viser_image(img_path)
-        hint = landmark_hints[i] if i < len(landmark_hints) else None
+        hint = normalized_hints[i]
         captions.append(_compact_caption(i, metrics, rel, planarity, hint))
     return captions
 
