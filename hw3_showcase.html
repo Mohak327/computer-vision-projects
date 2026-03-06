@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HW3 Showcase - Two-View SfM</title>
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: #171a2b;
+      --panel-2: #1f2338;
+      --text: #e9ecf8;
+      --muted: #b6bfd6;
+      --accent: #7aa2ff;
+      --ok: #64d3a5;
+      --border: #2d3453;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #0b0f1c 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1200px, 92vw);
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1a2040 0%, #182131 55%, #102030 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 1.9rem;
+      letter-spacing: 0.2px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .badge {
+      background: rgba(122, 162, 255, 0.18);
+      border: 1px solid rgba(122, 162, 255, 0.35);
+      color: #d8e4ff;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.86rem;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+      letter-spacing: 0.2px;
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .grid-1 { grid-template-columns: 1fr; }
+
+    .card {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card img {
+      width: 100%;
+      display: block;
+      max-height: 420px;
+      object-fit: contain;
+      background: #0b0f1c;
+    }
+
+    .diag-large .card img {
+      max-height: 760px;
+    }
+
+    .card-content {
+      padding: 12px;
+    }
+
+    .card-title {
+      margin: 0 0 6px;
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9rem;
+      color: #dce6ff;
+      white-space: pre;
+      background: #121a2c;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      margin: 8px 0 0;
+      overflow-x: auto;
+    }
+
+    .caption {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .deliverables {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .deliverables li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(100, 211, 165, 0.2);
+      flex: 0 0 auto;
+    }
+
+    .links {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      color: #dfe8ff;
+      border: 1px solid #415185;
+      background: rgba(122, 162, 255, 0.12);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      margin-top: 20px;
+      color: #8f98b5;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <h1>HW3 Showcase: Two-View Structure from Motion</h1>
+      <p>Complete deliverables overview from input images to triangulated scene and grounded Viser screenshot captions.</p>
+      <div class="badges">
+        <span class="badge">SIFT + NNDR</span>
+        <span class="badge">Essential Matrix + RANSAC</span>
+        <span class="badge">Triangulation</span>
+        <span class="badge">Viser Visualization</span>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>Deliverables Checklist</h2>
+      <p>Artifacts generated and included in this showcase page.</p>
+      <ul class="deliverables">
+        <li><span class="dot"></span>Input image pair</li>
+        <li><span class="dot"></span>Triangulation combined 3-view image</li>
+        <li><span class="dot"></span>Three individual triangulation views</li>
+        <li><span class="dot"></span>Three Viser screenshots</li>
+        <li><span class="dot"></span>Short grounded captions for each Viser screenshot</li>
+        <li><span class="dot"></span>Exported scene data file (NPZ)</li>
+      </ul>
+      <div class="links">
+        <a class="btn" href="images/output/hw3/step5_scene_data.npz">Download scene npz</a>
+        <a class="btn" href="images/output/hw3/viser/viser_screenshot_captions.txt">Download Viser captions</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Step 0: Input Images</h2>
+      <div class="grid-2">
+        <article class="card">
+          <img src="images/input/img1.jpeg" alt="Input image 1" />
+          <div class="card-content">
+            <h3 class="card-title">Image 1</h3>
+            <p class="caption">Reference view used for intrinsics, features, and color mapping of triangulated points.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/input/img2.jpeg" alt="Input image 2" />
+          <div class="card-content">
+            <h3 class="card-title">Image 2</h3>
+            <p class="caption">Second view used for matching, pose recovery, and two-view triangulation.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Step 1: Camera Intrinsics (K)</h2>
+      <p>Intrinsic matrix computed from camera metadata and image size in the notebook.</p>
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-content">
+            <h3 class="card-title">Input Parameters</h3>
+            <p class="caption">optical_focal_length_mm = 6.765, sensor_width_mm = 9.757, sensor_height_mm = 7.318, image_size = 1280×960 px.</p>
+            <div class="mono">f_x = f_y = 887.47074826
+c_x = 640
+c_y = 480</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-content">
+            <h3 class="card-title">Intrinsic Matrix K</h3>
+            <div class="mono">[[887.47074826,   0.00000000, 640.00000000],
+ [  0.00000000, 887.47074826, 480.00000000],
+ [  0.00000000,   0.00000000,   1.00000000]]</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Step 2: SIFT Feature Detection</h2>
+      <p>Detected SIFT keypoints overlaid on both input images using the configured detector parameters.</p>
+      <div class="grid-2">
+        <article class="card">
+          <img src="images/output/hw3/step2_sift_keypoints.png" alt="Step 2 SIFT keypoints" />
+          <div class="card-content">
+            <h3 class="card-title">SIFT Keypoints (Image 1 & Image 2)</h3>
+            <p class="caption">Red points show detected local features used for matching in Step 3.</p>
+            <div class="mono">sift_max_features = 4000
+sift_edge_discard = 10
+sift_contrast_threshold = 0.04
+sift_edge_threshold = 10
+sift_n_octave_layers = 3
+sift_sigma = 1.6
+
+num_sift_image1 = 3992
+num_sift_image2 = 3986</div>
+          </div>
+        </article>
+      </div>
+      <div class="links">
+        <a class="btn" href="images/output/hw3/step2_sift_stats.txt">Step 2 SIFT stats</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Step 3: Feature Matching Diagnostics (NNDR)</h2>
+      <p>Saved visual diagnostics for descriptor matching quality before geometric verification.</p>
+      <div class="grid-1 diag-large">
+        <article class="card">
+          <img src="images/output/hw3/nndr_histogram.png" alt="NNDR histogram" />
+          <div class="card-content">
+            <h3 class="card-title">NNDR Histogram</h3>
+            <p class="caption">Distribution of d1/d2 ratio values used for match filtering in Step 3.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/output/hw3/nndr_top5_matches.png" alt="Top NNDR feature matches" />
+          <div class="card-content">
+            <h3 class="card-title">Top-5 NNDR Descriptor Matches</h3>
+            <p class="caption">Best descriptor matches by lowest NNDR, shown with 1st and 2nd nearest neighbors.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/output/hw3/matches_before_ransac.png" alt="Matches before RANSAC" />
+          <div class="card-content">
+            <h3 class="card-title">Matches Before RANSAC</h3>
+            <p class="caption">All tentative correspondences after NNDR filtering, before inlier/outlier rejection.</p>
+          </div>
+        </article>
+      </div>
+      <div class="links">
+        <a class="btn" href="images/output/hw3/step3_matching_stats.txt">Step 3 matching stats</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Step 4: RANSAC Diagnostics</h2>
+      <p>Geometric verification outputs after Essential Matrix RANSAC, including inlier visualization and convergence.</p>
+      <p><strong>RANSAC parameters used:</strong></p>
+      <ul>
+        <li>iterations = 2000</li>
+        <li>Sampson distance threshold = 0.0002</li>
+        <li>final inliers found = 312</li>
+      </ul>
+      <div class="grid-1 diag-large">
+        <article class="card">
+          <img src="images/output/hw3/ransac_inlier_matches.png" alt="RANSAC inlier matches" />
+          <div class="card-content">
+            <h3 class="card-title">RANSAC Inlier Feature Matches</h3>
+            <p class="caption">Feature correspondences retained as inliers after Essential Matrix RANSAC.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/output/hw3/ransac_convergence.png" alt="RANSAC convergence" />
+          <div class="card-content">
+            <h3 class="card-title">RANSAC Convergence</h3>
+            <p class="caption">Best inlier count over iterations (generated when Step 4 runs with the updated RANSAC output history).</p>
+          </div>
+        </article>
+      </div>
+      <div class="links">
+        <a class="btn" href="images/output/hw3/step4_ransac_stats.txt">Step 4 RANSAC stats</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Step 5 Deliverable: Triangulation Views</h2>
+      <div class="grid-2">
+        <article class="card">
+          <img src="images/output/hw3/triangulation_view_1.png" alt="Triangulation view 1" />
+          <div class="card-content">
+            <h3 class="card-title">Triangulation View 1</h3>
+            <p class="caption">Wide layout view showing relative scene clusters and camera framing.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/output/hw3/triangulation_view_2.png" alt="Triangulation view 2" />
+          <div class="card-content">
+            <h3 class="card-title">Triangulation View 2</h3>
+            <p class="caption">Pose-consistency view highlighting recovered camera-2 placement.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/output/hw3/triangulation_view_3.png" alt="Triangulation view 3" />
+          <div class="card-content">
+            <h3 class="card-title">Triangulation View 3</h3>
+            <p class="caption">Planarity-check perspective for flattened scene regions.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Viser Screenshots + Grounded Captions</h2>
+      <p>Short captions generated from screenshot image content and scene geometry.</p>
+      <div class="grid-3">
+        <article class="card">
+          <img src="images/output/hw3/viser/image1.png" alt="Viser screenshot 1" />
+          <div class="card-content">
+            <h3 class="card-title">Screenshot 1</h3>
+            <p class="caption">... moderate detail; scene is well centered in frame. I see bookshelf, poster, coffee table.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/output/hw3/viser/image2.png" alt="Viser screenshot 2" />
+          <div class="card-content">
+            <h3 class="card-title">Screenshot 2</h3>
+            <p class="caption">... camera 2 appears right, lower and forward; pose looks consistent. I see camera 2 shifted top-right.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/output/hw3/viser/image3.png" alt="Viser screenshot 3" />
+          <div class="card-content">
+            <h3 class="card-title">Screenshot 3</h3>
+            <p class="caption">... structure looks more volumetric; scene sits compactly in frame. I see poster plane.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      Generated for HW3 report packaging · Open this file in a browser: hw3_showcase.html
+    </footer>
+  </div>
+</body>
+</html>

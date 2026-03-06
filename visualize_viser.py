@@ -8,10 +8,12 @@ Usage:
 from __future__ import annotations
 
 import os
+import re
 import sys
 import time
 import numpy as np
 import viser
+from PIL import Image
 
 
 def _make_server(start_port: int = 8081, max_tries: int = 50):
@@ -185,6 +187,193 @@ def visualize_scene(npz_path: str, port: int = 8081, block: bool = True):
             print("\nShutting down Viser server...")
 
     return server
+
+
+def _axis_word(delta: float, pos_word: str, neg_word: str, threshold: float):
+    if delta > threshold:
+        return pos_word
+    if delta < -threshold:
+        return neg_word
+    return None
+
+
+def _baseline_text(c_ref: np.ndarray, c_other: np.ndarray) -> str:
+    d = c_other - c_ref
+    scale = max(np.linalg.norm(d), 1e-8)
+    thr = 0.12 * scale
+
+    words = []
+    for word in [
+        _axis_word(d[0], "right", "left", thr),
+        _axis_word(d[1], "higher", "lower", thr),
+        _axis_word(d[2], "forward", "behind", thr),
+    ]:
+        if word is not None:
+            words.append(word)
+
+    if len(words) == 0:
+        return "near camera 1"
+    if len(words) == 1:
+        return words[0]
+    return ", ".join(words[:-1]) + " and " + words[-1]
+
+
+def _planarity_score(points: np.ndarray) -> float:
+    if points is None or len(points) < 10:
+        return 1.0
+    centered = points - np.mean(points, axis=0, keepdims=True)
+    _, s, _ = np.linalg.svd(centered, full_matrices=False)
+    if len(s) < 3 or s[0] <= 1e-10:
+        return 1.0
+    return float(s[2] / s[0])
+
+
+def _sorted_image_paths(folder: str):
+    exts = (".png", ".jpg", ".jpeg")
+    names = [name for name in os.listdir(folder) if name.lower().endswith(exts)]
+
+    def _key(name: str):
+        nums = re.findall(r"\d+", name)
+        return (int(nums[-1]) if nums else 10**9, name.lower())
+
+    names.sort(key=_key)
+    return [os.path.join(folder, name) for name in names]
+
+
+def _analyze_viser_image(path: str):
+    img = np.array(Image.open(path).convert("RGB"), dtype=np.float32)
+    h, w = img.shape[:2]
+
+    gray = 0.299 * img[..., 0] + 0.587 * img[..., 1] + 0.114 * img[..., 2]
+    contrast = float(np.std(gray) / 255.0)
+
+    gx = np.zeros_like(gray)
+    gy = np.zeros_like(gray)
+    gx[:, 1:] = np.abs(gray[:, 1:] - gray[:, :-1])
+    gy[1:, :] = np.abs(gray[1:, :] - gray[:-1, :])
+    grad = np.sqrt(gx * gx + gy * gy)
+    edge_threshold = np.percentile(grad, 85)
+    edge_density = float(np.mean(grad > edge_threshold))
+
+    corner_samples = np.vstack(
+        [
+            img[0:30, 0:30].reshape(-1, 3),
+            img[0:30, -30:].reshape(-1, 3),
+            img[-30:, 0:30].reshape(-1, 3),
+            img[-30:, -30:].reshape(-1, 3),
+        ]
+    )
+    bg = np.median(corner_samples, axis=0)
+    dist = np.linalg.norm(img - bg, axis=2)
+    fg = dist > 28.0
+    occupancy = float(np.mean(fg))
+
+    if np.any(fg):
+        ys, xs = np.where(fg)
+        cx = float(np.mean(xs) / max(w - 1, 1))
+        cy = float(np.mean(ys) / max(h - 1, 1))
+    else:
+        cx, cy = 0.5, 0.5
+
+    return {
+        "contrast": contrast,
+        "edge_density": edge_density,
+        "occupancy": occupancy,
+        "centroid_x": cx,
+        "centroid_y": cy,
+    }
+
+
+def _detail_phrase(metrics) -> str:
+    if metrics["edge_density"] > 0.20 and metrics["contrast"] > 0.16:
+        return "dense detail"
+    if metrics["edge_density"] > 0.14:
+        return "moderate detail"
+    return "sparser detail"
+
+
+def _frame_phrase(metrics) -> str:
+    if metrics["occupancy"] > 0.28:
+        return "fills much of the frame"
+    if metrics["occupancy"] > 0.16:
+        return "is well centered in frame"
+    return "sits compactly in frame"
+
+
+def _compact_caption(i: int, metrics, rel_text: str, planarity: float, hint: str | None):
+    detail = _detail_phrase(metrics)
+    frame = _frame_phrase(metrics)
+
+    if i == 0:
+        base = f"... {detail}; scene {frame}."
+    elif i == 1:
+        base = f"... camera 2 appears {rel_text}; pose looks consistent."
+    else:
+        if planarity < 0.07:
+            plane = "poster/planar surface looks flat"
+        elif planarity < 0.14:
+            plane = "planarity is partly visible"
+        else:
+            plane = "structure looks more volumetric"
+        base = f"... {plane}; scene {frame}."
+
+    if hint is not None and str(hint).strip() != "":
+        return f"{base} I see {hint}."
+    return base
+
+
+def generate_viser_captions(npz_path: str, viser_image_paths: list[str], landmark_hints: list[str] | None = None):
+    data = np.load(npz_path, allow_pickle=True)
+    points = data["points_3d"] if "points_3d" in data else np.zeros((0, 3))
+    camera_poses = data["camera_poses"]
+
+    c0 = camera_poses[0][:3, 3]
+    c1 = camera_poses[1][:3, 3]
+    rel = _baseline_text(c0, c1)
+    planarity = _planarity_score(points) if len(points) > 0 else 1.0
+
+    if landmark_hints is None:
+        landmark_hints = [None] * len(viser_image_paths)
+
+    captions = []
+    for i, img_path in enumerate(viser_image_paths):
+        metrics = _analyze_viser_image(img_path)
+        hint = landmark_hints[i] if i < len(landmark_hints) else None
+        captions.append(_compact_caption(i, metrics, rel, planarity, hint))
+    return captions
+
+
+def generate_viser_captions_from_folder(
+    npz_path: str,
+    viser_dir: str,
+    landmark_hints: list[str] | None = None,
+    output_filename: str = "viser_screenshot_captions.txt",
+):
+    if not os.path.exists(npz_path):
+        raise FileNotFoundError(f"Scene file not found: {npz_path}")
+    if not os.path.isdir(viser_dir):
+        raise FileNotFoundError(f"Viser screenshot folder not found: {viser_dir}")
+
+    viser_image_paths = _sorted_image_paths(viser_dir)
+    if len(viser_image_paths) == 0:
+        raise RuntimeError(f"No screenshots found in: {viser_dir}")
+
+    captions = generate_viser_captions(
+        npz_path=npz_path,
+        viser_image_paths=viser_image_paths,
+        landmark_hints=landmark_hints,
+    )
+
+    out_path = os.path.join(viser_dir, output_filename)
+    with open(out_path, "w", encoding="utf-8") as f:
+        for i, (img_path, cap) in enumerate(zip(viser_image_paths, captions), start=1):
+            name = os.path.basename(img_path)
+            line = f"Screenshot {i} ({name}): {cap}"
+            print(line)
+            f.write(line + "\n")
+
+    print("\nSaved caption file:", out_path)
+    return captions, out_path
 
 
 def main():

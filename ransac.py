@@ -57,9 +57,13 @@ def RANSAC(
     num_iters: int,
     output_dir: str | None = None,
 ):
-    """RANSAC for essential matrix; returns (R, t, inlier_mask, E, points_3d)."""
+    """RANSAC for essential matrix.
+
+    Returns:
+        (R, t, inlier_mask, E_refined, points_3d, best_inlier_history, inlier_count_history)
+    """
     if len(correspondence_pairs) < 8:
-        return None, None, None, None, None
+        return None, None, None, None, None, None, None
 
     s = max(8, min(len(correspondence_pairs), s))
     img1_pts = correspondence_pairs[:, 0]
@@ -69,6 +73,8 @@ def RANSAC(
     best_num_inliers = 0
     best_E = None
     best_inliers_mask = None
+    best_inlier_history = []
+    inlier_count_history = []
 
     for _ in range(num_iters):
         idx = np.random.choice(len(img1_pts), s, replace=False)
@@ -77,27 +83,58 @@ def RANSAC(
             E = compute_E(img1_pts[idx], img2_pts[idx], K)
             R_try, t_try, _ = recover_pose(E, img1_pts[idx], img2_pts[idx], K)
             if R_try is None:
+                inlier_count_history.append(0)
+                best_inlier_history.append(best_num_inliers)
                 continue
 
             d2 = sampson_distance(E, img1_pts, img2_pts, K_inv)
             inliers_mask = d2 < epsilon
             num_inliers = int(np.sum(inliers_mask))
+            inlier_count_history.append(num_inliers)
 
             if num_inliers > best_num_inliers:
                 best_num_inliers = num_inliers
                 best_E = E
                 best_inliers_mask = inliers_mask
         except (np.linalg.LinAlgError, AssertionError, ValueError):
+            inlier_count_history.append(0)
+            best_inlier_history.append(best_num_inliers)
             continue
 
+        best_inlier_history.append(best_num_inliers)
+
     if best_E is None or best_inliers_mask is None or best_num_inliers < 8:
-        return None, None, None, None, None
+        return (
+            None,
+            None,
+            None,
+            None,
+            None,
+            np.array(best_inlier_history, dtype=int),
+            np.array(inlier_count_history, dtype=int),
+        )
 
     # post-loop refinement
     E_refined = compute_E(img1_pts[best_inliers_mask], img2_pts[best_inliers_mask], K)
     R, t, points_3d = recover_pose(E_refined, img1_pts[best_inliers_mask], img2_pts[best_inliers_mask], K)
 
     if R is None:
-        return None, None, None, None, None
+        return (
+            None,
+            None,
+            None,
+            None,
+            None,
+            np.array(best_inlier_history, dtype=int),
+            np.array(inlier_count_history, dtype=int),
+        )
 
-    return R, t, best_inliers_mask, E_refined, points_3d
+    return (
+        R,
+        t,
+        best_inliers_mask,
+        E_refined,
+        points_3d,
+        np.array(best_inlier_history, dtype=int),
+        np.array(inlier_count_history, dtype=int),
+    )

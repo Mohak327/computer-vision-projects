@@ -1,0 +1,9 @@
+ransac_sample_size=8
+ransac_epsilon=0.0002
+ransac_num_iters=2000
+total_correspondences=395
+num_inliers=312
+inlier_ratio=0.789873
+best_inliers_last_iter=312
+convergence_iterations_recorded=2000
+per_iteration_counts_recorded=2000

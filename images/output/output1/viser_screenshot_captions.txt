@@ -1,0 +1,3 @@
+Screenshot 1: Wide scene view: sparse 3D clusters are visible, and camera baseline is about 1.000 units. Visible landmarks: bookshelf, poster, coffee table.
+Screenshot 2: Pose-consistency view: Camera 2 appears to the right, lower and forward of camera 1, matching the recovered rotation/translation. Visible landmarks: camera 2 shifted top-right relative to camera 1.
+Screenshot 3: Planarity-check view: the reconstruction appears more volumetric than planar from this view (planarity score=0.259, spread≈3.654). Visible landmarks: poster plane.
