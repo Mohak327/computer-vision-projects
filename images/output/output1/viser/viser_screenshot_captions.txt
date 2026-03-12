@@ -1,3 +1,0 @@
-Screenshot 1 (image1.png): ... moderate detail; scene is well centered in frame. I see bookshelf, poster, coffee table.
-Screenshot 2 (image2.png): ... camera 2 appears right, lower and forward; pose looks consistent. I see camera 2 shifted top-right.
-Screenshot 3 (image3.png): ... structure looks more volumetric; scene sits compactly in frame. I see poster plane.

@@ -1,3 +1,0 @@
-Screenshot 1 (image1.png): ... moderate detail; scene sits compactly in frame.
-Screenshot 2 (image2.png): ... camera 2 appears left and forward; pose looks consistent.
-Screenshot 3 (image3.png): ... structure looks more volumetric; scene sits compactly in frame.

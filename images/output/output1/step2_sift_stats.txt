@@ -1,8 +1,0 @@
-sift_max_features=4000
-sift_edge_discard=10
-sift_contrast_threshold=0.04
-sift_edge_threshold=10
-sift_n_octave_layers=3
-sift_sigma=1.6
-num_sift_image1=3992
-num_sift_image2=3986

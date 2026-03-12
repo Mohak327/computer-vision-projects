@@ -1,63 +1,78 @@
-# HW3: Two-View Structure from Motion (SIFT + Essential Matrix + Triangulation)
+# Part 1: Fit a Neural Field to a 2D Image
 
-This project implements a complete two-view SfM pipeline in `main.ipynb` and exports an interactive 3D scene for Viser.
+This project fits a coordinate-based neural field (MLP + sinusoidal positional encoding) to an RGB image using PyTorch.
+
+The full implementation is in `main.ipynb` and includes:
+- random pixel sampling dataloader,
+- MSE loss + Adam optimizer,
+- PSNR tracking,
+- training progression visualizations,
+- 2x2 hyperparameter comparison,
+- a high-quality reconstruction run.
 
 ---
 
 ## Project Structure
 
-```text
-rgb-img-merging/
-├─ main.ipynb                 # End-to-end HW3 pipeline (steps 0-5 + exports + interactive viewer call)
-├─ intrinsics.py              # Camera intrinsic matrix K computation from camera/sensor specs
-├─ features.py                # SIFT feature extraction + BFMatcher NNDR matching
-├─ ransac.py                  # Essential matrix estimation with RANSAC + Sampson inlier scoring
-├─ triangulation.py           # E decomposition, pose recovery, triangulation, reprojection filtering
-├─ visualize_viser.py         # Interactive 3D viewer for exported scene (.npz)
-├─ images/
-│  ├─ input/                  # Input image pair (img1.jpeg, img2.jpeg)
-│  └─ output/
-│     └─ hw3/                 # Generated plots, 3-view screenshots, and scene npz
-├─ hw3.pdf                    # Assignment/reference document
-└─ README.md
 ```
+rgb-img-merging/
+├── .git/
+├── .gitignore
+├── .venv/
+├── README.md
+├── main.ipynb
+├── __pycache__/
+└── images/
+	├── input/
+	│   ├── .DS_Store
+	│   └── part1/
+	│       └── img_1.jpg
+	└── output/
+		└── part1_neural_field/
+			├── baseline_final.png
+			├── baseline_progression.png
+			├── baseline_psnr_curve.png
+			├── hq_final.png
+			├── hq_progression.png
+			├── hq_psnr_curve.png
+			└── grid_2x2_results.png
+```
+
+For Part 1, the starting image is located at `images/input/part1/img_1.jpg`.
 
 ---
 
-## Pipeline Architecture
+## Pipeline Overview
 
-### Step 0: Load Input Images
-- Reads RGB + grayscale versions of the two input images.
-- Creates output directory: `images/output/hw3`.
+### 1. Load and Normalize Image
+- Reads `images/input/part1/img_1.jpg`.
+- Normalizes RGB values to `[0, 1]`.
+- Builds full normalized coordinate grid `(x, y)` in `[0, 1]`.
 
-### Step 1: Camera Intrinsics (`intrinsics.py`)
-- `compute_K(...)` converts focal length + sensor size + image size into intrinsic matrix `K`.
+### 2. Positional Encoding (PE)
+- Applies sinusoidal PE with max frequency level `L`.
+- Uses concatenation: original coordinates + `sin/cos` frequency bands.
 
-### Step 2: SIFT Features (`features.py`)
-- `get_sift_features(...)` extracts keypoints/descriptors.
-- Applies edge discard filtering and returns keypoints in `(row, col)` format.
+### 3. Neural Field MLP
+- Input: encoded 2D coordinates.
+- Hidden layers: ReLU activations.
+- Output layer: 3 channels with Sigmoid to keep RGB in `[0, 1]`.
 
-### Step 3: Feature Matching + NNDR (`features.py`)
-- `match_features(...)` performs BFMatcher (`L2`) 2-NN matching.
-- Applies Lowe ratio test (NNDR).
-- Notebook visualizes:
-	- NNDR histogram,
-	- pre-RANSAC correspondence overlay,
-	- top-5 descriptor matches by lowest NNDR.
+### 4. Random Pixel Sampling Dataloader
+- Each iteration samples `N` random pixels.
+- Returns `N x 2` coordinates and corresponding `N x 3` RGB targets.
 
-### Step 4: Essential Matrix RANSAC (`ransac.py`)
-- Estimates `E` using normalized 8-point algorithm under RANSAC.
-- Uses Sampson distance for inlier selection.
-- Recovers relative pose `(R, t)` from refined `E`.
+### 5. Optimization + Metrics
+- Loss: MSE (`torch.nn.functional.mse_loss`).
+- Optimizer: Adam.
+- Metric: PSNR (`-10 * log10(MSE)`).
+- Includes LR decay and best-checkpoint restore for higher reconstruction quality.
 
-### Step 5: Triangulation (`triangulation.py`)
-- Triangulates inlier correspondences.
-- Filters with depth + reprojection-error constraints.
-- Produces sparse 3D cloud and visualization plots.
-
-### Scene Export + Interactive Viewer (`visualize_viser.py`)
-- Exports `step5_scene_data.npz` from notebook.
-- Loads `.npz` into Viser with toggles for point cloud, cameras, camera images, and baseline.
+### 6. Deliverables Implemented in Notebook
+- Model architecture report (layers, width, LR, etc.).
+- Training progression images at multiple steps.
+- 2x2 hyperparameter grid over two `L` values and two width values.
+- PSNR curve for a selected run.
 
 ---
 
@@ -72,8 +87,7 @@ Required Python packages:
 - `numpy`
 - `matplotlib`
 - `pillow`
-- `opencv-python`
-- `viser`
+- `torch`
 - `ipykernel`
 
 ### Installation
@@ -88,7 +102,7 @@ Windows (PowerShell):
 ```powershell
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install numpy matplotlib pillow opencv-python viser ipykernel
+pip install numpy matplotlib pillow torch torchvision tqdm ipykernel
 ```
 
 macOS/Linux:
@@ -96,45 +110,31 @@ macOS/Linux:
 ```bash
 source .venv/bin/activate
 python -m pip install --upgrade pip
-pip install numpy matplotlib pillow opencv-python viser ipykernel
+pip install numpy matplotlib pillow torch torchvision tqdm ipykernel
 ```
 
 ---
 
 ## Usage
 
-### Run the Notebook Pipeline
+### Run the Notebook
 1. Open `main.ipynb`.
 2. Run cells in order from top to bottom.
-3. Outputs are written to `images/output/hw3/`.
+3. Baseline, HQ, and grid outputs are saved to `images/output/part1_neural_field/`.
 
-### Launch Interactive Viser (from Notebook)
-- The notebook imports `visualize_scene` from `visualize_viser.py` and starts server with:
-	- `server = visualize_scene(scene_npz, port=8081, block=False)`
-
-### Launch Interactive Viser (CLI)
-
-```bash
-python visualize_viser.py images/output/hw3/step5_scene_data.npz
-```
-
-Open the printed local URL in your browser.
+### Quick/Fast Development Mode
+- In the baseline run cell, keep `FAST_DEV_RUN = True` for short tests.
+- Set `FAST_DEV_RUN = False` for full-quality training.
 
 ---
 
-## Implementation Checklist
-- [x] Step 0: Load and display input images
-- [x] Step 1: Compute intrinsic matrix `K`
-- [x] Step 2: Detect SIFT features in both views
-- [x] Step 3: Match descriptors with NNDR + visualize top-5 NNDR matches
-- [x] Step 4: Estimate `E` with RANSAC and recover `(R, t)`
-- [x] Step 5: Triangulate inlier correspondences and filter 3D points
-- [x] Save 3 triangulation views with camera frustums
-- [x] Export `.npz` scene and view in Viser
+## Current Results
+- Baseline PSNR: `25.43 dB`
+- High-quality PSNR: `28.38 dB`
+- Improvement over baseline: `+2.95 dB`
 
 ---
 
 ## Notes
-- Coordinate convention in matching/triangulation code is primarily `(row, col)` in notebook-level arrays.
-- If imports such as `cv2`, `numpy`, or `viser` appear unresolved in the editor, verify the selected Python interpreter points to `.venv`.
-- `panorama_results.html` is currently not part of the HW3 SfM execution flow in `main.ipynb`.
+- Training is CPU-heavy at full settings; full HQ run can take around 10-20 minutes depending on hardware.
+- If imports are unresolved, verify the selected interpreter is `.venv`.

@@ -1,9 +1,0 @@
-ratio_threshold=0.8
-num_correspondences_after_nndr=395
-nndr_count=3992
-nndr_min=0.243048
-nndr_mean=0.907197
-nndr_median=0.949948
-nndr_max=0.999992
-top_k_nndr=5
-top_ratios=0.243048,0.257680,0.292297,0.301473,0.315001
