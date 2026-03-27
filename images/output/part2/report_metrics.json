@@ -1,20 +1,26 @@
 {
-  "best_psnr": 10.635948181152344,
-  "best_step": 20,
-  "final_loss": 0.0995035320520401,
+  "best_psnr": 16.740236282348633,
+  "best_step": 200,
+  "final_loss": 0.01637938991189003,
   "near": 2.0,
   "far": 6.0,
-  "n_steps": 20,
-  "batch_rays": 1024,
+  "n_steps": 200,
+  "batch_rays": 256,
   "n_coarse": 32,
   "n_fine": 32,
   "val_psnr_hist": [
-    10.635948181152344
+    12.06944465637207,
+    13.465744256973267,
+    16.33725643157959,
+    16.740236282348633
   ],
   "eval_steps": [
-    20
+    50,
+    100,
+    150,
+    200
   ],
-  "total_seconds": 146.2055124000035,
-  "avg_seconds_per_step": 7.310275620000175,
-  "log_every": 1
+  "total_seconds": 382.6816620999962,
+  "avg_seconds_per_step": 1.9134083104999808,
+  "log_every": 10
 }

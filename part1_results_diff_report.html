@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Part 1 Diff Report</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --fg: #1d2430;
+      --muted: #596579;
+      --card: #ffffff;
+      --line: #d4dce8;
+      --up: #0f7b5f;
+      --down: #9e2e2e;
+      --accent: #204a87;
+    }
+    body { margin: 0; font-family: Segoe UI, Tahoma, sans-serif; background: var(--bg); color: var(--fg); }
+    .wrap { max-width: 1120px; margin: 20px auto 40px; padding: 0 14px; }
+    .hero, .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+    .hero { box-shadow: 0 6px 20px rgba(20, 30, 50, 0.07); }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h2 { margin-top: 22px; }
+    p, li { color: var(--muted); line-height: 1.5; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 10px; }
+    .kpi { font-size: 28px; font-weight: 700; color: var(--accent); }
+    .up { color: var(--up); font-weight: 700; }
+    .down { color: var(--down); font-weight: 700; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    img { width: 100%; border-radius: 8px; border: 1px solid #e2e7ef; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border-bottom: 1px solid var(--line); text-align: left; padding: 8px 10px; font-size: 14px; }
+    th { background: #eef2f8; }
+    .mono { font-family: Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Part 1 Results Diff Report</h1>
+      <p>
+        Auto-generated report comparing baseline and high-quality runs, plus full deliverables
+        (progressions, PSNR curves, and grid search).
+      </p>
+      <p class="mono">Source metrics: C:/Users/mohak/Documents/PROJECTS/rgb-img-merging/images/output/part1_neural_field/report_metrics.json</p>
+    </section>
+
+    <h2>Baseline vs HQ Diff</h2>
+    <div class="kpi-grid">
+      <div class="card"><div>Baseline PSNR</div><div class="kpi">25.43 dB</div><div class="mono">MSE 0.002867</div></div>
+      <div class="card"><div>HQ PSNR</div><div class="kpi">27.37 dB</div><div class="mono">MSE 0.001832</div></div>
+      <div class="card"><div>PSNR Improvement</div><div class="kpi up">+1.95 dB</div><div>MSE Change: <span class="down">-0.001035</span></div></div>
+    </div>
+
+    <h3>Config Diff</h3>
+    <table>
+      <tr><th>Field</th><th>Baseline</th><th>HQ</th></tr>
+      <tr><td>L</td><td>10</td><td>12</td></tr>
+      <tr><td>Width</td><td>256</td><td>384</td></tr>
+      <tr><td>Hidden layers</td><td>4</td><td>5</td></tr>
+      <tr><td>LR</td><td>0.01</td><td>0.008</td></tr>
+      <tr><td>Min LR</td><td>0.0004</td><td>0.0002</td></tr>
+      <tr><td>Steps</td><td>1800</td><td>2600</td></tr>
+      <tr><td>Batch size</td><td>8000</td><td>10000</td></tr>
+    </table>
+
+    <h2>Final Reconstructions</h2>
+    <div class="grid2">
+      <div class="card"><h3>Baseline Final</h3><img src="images/output/part1_neural_field/baseline_final.png" alt="Baseline final"></div>
+      <div class="card"><h3>HQ Final</h3><img src="images/output/part1_neural_field/hq_final.png" alt="HQ final"></div>
+    </div>
+
+    <h2>Training Progressions</h2>
+    <div class="card"><h3>Baseline Progression</h3><img src="images/output/part1_neural_field/baseline_progression.png" alt="Baseline progression"></div>
+    <div class="card"><h3>HQ Progression</h3><img src="images/output/part1_neural_field/hq_progression.png" alt="HQ progression"></div>
+
+    <h2>PSNR Curves</h2>
+    <div class="grid2">
+      <div class="card"><h3>Baseline PSNR Curve</h3><img src="images/output/part1_neural_field/baseline_psnr_curve.png" alt="Baseline PSNR curve"></div>
+      <div class="card"><h3>HQ PSNR Curve</h3><img src="images/output/part1_neural_field/hq_psnr_curve.png" alt="HQ PSNR curve"></div>
+    </div>
+
+    <h2>2x2 Hyperparameter Grid</h2>
+    <div class="card"><img src="images/output/part1_neural_field/grid_2x2_results.png" alt="Grid 2x2 results"></div>
+    <p><strong>Best grid config:</strong> L=10, width=256, PSNR=25.70 dB</p>
+    <table>
+      <tr><th>L</th><th>Width</th><th>PSNR (dB)</th><th>MSE</th></tr>
+      <tr><td>10</td><td>256</td><td>25.70</td><td>0.002689</td></tr><tr><td>10</td><td>128</td><td>25.35</td><td>0.002920</td></tr><tr><td>4</td><td>128</td><td>24.43</td><td>0.003602</td></tr><tr><td>4</td><td>256</td><td>24.06</td><td>0.003925</td></tr>
+    </table>
+
+    <h2>Deliverables Coverage</h2>
+    <ul>
+      <li>Model architecture details: covered in config diff table.</li>
+      <li>Training progression on provided image: baseline + HQ progression panels.</li>
+      <li>Final 2x2 results for two L and two width values: grid figure + table.</li>
+      <li>PSNR curve for selected run: baseline/HQ PSNR curves.</li>
+    </ul>
+  </div>
+</body>
+</html>

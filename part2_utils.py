@@ -7,6 +7,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+from PIL import Image
 
 
 def ensure_dir(path: str | Path) -> Path:
@@ -70,7 +71,8 @@ def save_rgb_png(image: np.ndarray, output_path: str | Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     img = np.clip(image, 0.0, 1.0)
-    plt.imsave(output_path, img)
+    img_uint8 = (img * 255.0).round().astype(np.uint8)
+    Image.fromarray(img_uint8, mode="RGB").save(output_path)
 
 
 def save_depth_png(depth: np.ndarray, output_path: str | Path) -> None:
@@ -85,4 +87,6 @@ def save_depth_png(depth: np.ndarray, output_path: str | Path) -> None:
     else:
         d = np.zeros_like(d)
 
-    plt.imsave(output_path, d, cmap="inferno")
+    d_rgba = plt.cm.inferno(d)
+    d_rgb_uint8 = (d_rgba[..., :3] * 255.0).round().astype(np.uint8)
+    Image.fromarray(d_rgb_uint8, mode="RGB").save(output_path)

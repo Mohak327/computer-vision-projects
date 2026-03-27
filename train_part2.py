@@ -5,12 +5,14 @@ import time
 from pathlib import Path
 from typing import Any
 
+import imageio.v2 as imageio
 import numpy as np
 import torch
 import torch.nn.functional as F
 
 from dataset_3d import RaysData, image_to_rays, load_data
 from nerf_model import NeRFMLP
+from part2_utils import save_depth_png, save_rgb_png
 from rendering import render_image_by_chunks, render_rays_hierarchical
 
 
@@ -231,7 +233,7 @@ def train_nerf_part2(
 
         if step % eval_every == 0 or step == n_steps:
             eval_start = time.perf_counter()
-            _, val_psnr = render_full_validation_image(
+            val_rgb_pred, val_psnr = render_full_validation_image(
                 image=val_images[0],
                 c2w=val_c2ws[0],
                 k=k,
@@ -245,6 +247,9 @@ def train_nerf_part2(
                 device=device,
             )
             eval_seconds = time.perf_counter() - eval_start
+
+            # (out_path / "progress_renders").mkdir(parents=True, exist_ok=True)
+            # save_rgb_png(val_rgb_pred.cpu().numpy(), out_path / f"progress_renders/step_{step:04d}.png")
 
             eval_steps.append(step)
             val_psnr_hist.append(val_psnr)
@@ -313,34 +318,25 @@ def train_nerf_part2(
 
 
 @torch.no_grad()
-def render_test_trajectory(
+def _iter_test_trajectory_renders(
     model_coarse: NeRFMLP,
     model_fine: NeRFMLP,
     k: torch.Tensor,
     test_c2ws: torch.Tensor,
     image_hw: tuple[int, int],
-    output_dir: str,
     near: float,
     far: float,
     n_coarse: int,
     n_fine: int,
     chunk_size: int,
     device: str,
-) -> None:
-    """Render all test poses and save RGB/depth outputs as numpy arrays.
-
-    PNG writing is intentionally left to notebook utilities to keep this module torch-centric.
-    """
-    out_path = Path(output_dir)
-    rgb_dir = out_path / "test_rgb_npy"
-    depth_dir = out_path / "test_depth_npy"
-    rgb_dir.mkdir(parents=True, exist_ok=True)
-    depth_dir.mkdir(parents=True, exist_ok=True)
-
+) -> tuple[int, np.ndarray, np.ndarray]:
+    """Yield rendered RGB and depth frames for each test pose."""
     h, w = image_hw
     dummy_image = torch.zeros((h, w, 3), device=device)
 
     for idx in range(test_c2ws.shape[0]):
+        print(f"Rendering test view {idx+1}/{test_c2ws.shape[0]}...")
         rays = image_to_rays(dummy_image, test_c2ws[idx], k, device=device)
         rays_o = rays[..., :3].reshape(-1, 3).float()
         rays_d = rays[..., 3:].reshape(-1, 3).float()
@@ -362,6 +358,165 @@ def render_test_trajectory(
         out = render_image_by_chunks(rays_o, rays_d, _render_fn, chunk_size=chunk_size)
         rgb = out["rgb_fine"].reshape(h, w, 3).detach().cpu().numpy()
         depth = out["depth_fine"].reshape(h, w).detach().cpu().numpy()
+        yield idx, rgb, depth
 
-        np.save(rgb_dir / f"view_{idx:02d}.npy", rgb)
-        np.save(depth_dir / f"view_{idx:02d}.npy", depth)
+
+def _save_gif_from_pngs(
+    png_paths: list[Path],
+    output_path: str | Path,
+    duration: float,
+) -> None:
+    """Create a GIF from an ordered list of PNG frames."""
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    frames = [imageio.imread(path) for path in png_paths]
+    imageio.mimsave(output_path, frames, duration=duration)
+
+
+@torch.no_grad()
+def render_test_trajectory_rgb(
+    model_coarse: NeRFMLP,
+    model_fine: NeRFMLP,
+    k: torch.Tensor,
+    test_c2ws: torch.Tensor,
+    image_hw: tuple[int, int],
+    output_dir: str,
+    near: float,
+    far: float,
+    n_coarse: int,
+    n_fine: int,
+    chunk_size: int,
+    device: str,
+    gif_duration: float = 0.1,
+) -> None:
+    """Render RGB test frames and save them as NPY, PNG, and GIF."""
+    out_path = Path(output_dir)
+    rgb_npy_dir = out_path / "test_rgb_npy"
+    rgb_png_dir = out_path / "test_rgb_png"
+    rgb_npy_dir.mkdir(parents=True, exist_ok=True)
+    rgb_png_dir.mkdir(parents=True, exist_ok=True)
+
+    png_paths: list[Path] = []
+    for idx, rgb, _depth in _iter_test_trajectory_renders(
+        model_coarse=model_coarse,
+        model_fine=model_fine,
+        k=k,
+        test_c2ws=test_c2ws,
+        image_hw=image_hw,
+        near=near,
+        far=far,
+        n_coarse=n_coarse,
+        n_fine=n_fine,
+        chunk_size=chunk_size,
+        device=device,
+    ):
+        npy_path = rgb_npy_dir / f"view_{idx:02d}.npy"
+        png_path = rgb_png_dir / f"view_{idx:02d}.png"
+        np.save(npy_path, rgb)
+        save_rgb_png(rgb, png_path)
+        png_paths.append(png_path)
+
+    _save_gif_from_pngs(png_paths, out_path / "test_rgb.gif", duration=gif_duration)
+
+
+@torch.no_grad()
+def render_test_trajectory_depth(
+    model_coarse: NeRFMLP,
+    model_fine: NeRFMLP,
+    k: torch.Tensor,
+    test_c2ws: torch.Tensor,
+    image_hw: tuple[int, int],
+    output_dir: str,
+    near: float,
+    far: float,
+    n_coarse: int,
+    n_fine: int,
+    chunk_size: int,
+    device: str,
+    gif_duration: float = 0.1,
+) -> None:
+    """Render depth test frames and save them as NPY, PNG, and GIF."""
+    out_path = Path(output_dir)
+    depth_npy_dir = out_path / "test_depth_npy"
+    depth_png_dir = out_path / "test_depth_png"
+    depth_npy_dir.mkdir(parents=True, exist_ok=True)
+    depth_png_dir.mkdir(parents=True, exist_ok=True)
+
+    png_paths: list[Path] = []
+    for idx, _rgb, depth in _iter_test_trajectory_renders(
+        model_coarse=model_coarse,
+        model_fine=model_fine,
+        k=k,
+        test_c2ws=test_c2ws,
+        image_hw=image_hw,
+        near=near,
+        far=far,
+        n_coarse=n_coarse,
+        n_fine=n_fine,
+        chunk_size=chunk_size,
+        device=device,
+    ):
+        npy_path = depth_npy_dir / f"view_{idx:02d}.npy"
+        png_path = depth_png_dir / f"view_{idx:02d}.png"
+        np.save(npy_path, depth)
+        save_depth_png(depth, png_path)
+        png_paths.append(png_path)
+
+    _save_gif_from_pngs(png_paths, out_path / "test_depth.gif", duration=gif_duration)
+
+
+@torch.no_grad()
+def render_test_trajectory(
+    model_coarse: NeRFMLP,
+    model_fine: NeRFMLP,
+    k: torch.Tensor,
+    test_c2ws: torch.Tensor,
+    image_hw: tuple[int, int],
+    output_dir: str,
+    near: float,
+    far: float,
+    n_coarse: int,
+    n_fine: int,
+    chunk_size: int,
+    device: str,
+    gif_duration: float = 0.1,
+) -> None:
+    """Render the full test trajectory and save both RGB and depth outputs."""
+    out_path = Path(output_dir)
+    rgb_npy_dir = out_path / "test_rgb_npy"
+    rgb_png_dir = out_path / "test_rgb_png"
+    depth_npy_dir = out_path / "test_depth_npy"
+    depth_png_dir = out_path / "test_depth_png"
+    for path in (rgb_npy_dir, rgb_png_dir, depth_npy_dir, depth_png_dir):
+        path.mkdir(parents=True, exist_ok=True)
+
+    rgb_png_paths: list[Path] = []
+    depth_png_paths: list[Path] = []
+    for idx, rgb, depth in _iter_test_trajectory_renders(
+        model_coarse=model_coarse,
+        model_fine=model_fine,
+        k=k,
+        test_c2ws=test_c2ws,
+        image_hw=image_hw,
+        near=near,
+        far=far,
+        n_coarse=n_coarse,
+        n_fine=n_fine,
+        chunk_size=chunk_size,
+        device=device,
+    ):
+        rgb_npy_path = rgb_npy_dir / f"view_{idx:02d}.npy"
+        rgb_png_path = rgb_png_dir / f"view_{idx:02d}.png"
+        depth_npy_path = depth_npy_dir / f"view_{idx:02d}.npy"
+        depth_png_path = depth_png_dir / f"view_{idx:02d}.png"
+
+        np.save(rgb_npy_path, rgb)
+        save_rgb_png(rgb, rgb_png_path)
+        np.save(depth_npy_path, depth)
+        save_depth_png(depth, depth_png_path)
+
+        rgb_png_paths.append(rgb_png_path)
+        depth_png_paths.append(depth_png_path)
+
+    _save_gif_from_pngs(rgb_png_paths, out_path / "test_rgb.gif", duration=gif_duration)
+    _save_gif_from_pngs(depth_png_paths, out_path / "test_depth.gif", duration=gif_duration)
