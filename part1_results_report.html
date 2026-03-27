@@ -1,202 +1,364 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Part 1 Neural Field Results</title>
-  <style>
-    :root {
-      --bg: #f6f7f9;
-      --card: #ffffff;
-      --ink: #1e2430;
-      --muted: #5a6578;
-      --line: #d8dee8;
-      --accent: #0f6d5a;
-    }
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(180deg, #eef3f9 0%, #f6f7f9 35%, #f6f7f9 100%);
-      color: var(--ink);
-    }
-    .wrap {
-      max-width: 1100px;
-      margin: 24px auto 48px;
-      padding: 0 16px;
-    }
-    .hero {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 6px 22px rgba(20, 30, 55, 0.08);
-    }
-    h1, h2, h3 { margin: 0 0 12px; }
-    h1 { font-size: 30px; }
-    h2 { font-size: 22px; margin-top: 24px; }
-    h3 { font-size: 18px; margin-top: 18px; }
-    p, li { color: var(--muted); line-height: 1.5; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 14px;
-    }
-    .kpi {
-      font-size: 26px;
-      color: var(--accent);
-      font-weight: 700;
-      margin-top: 2px;
-    }
-    .figure {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 12px;
-    }
-    img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      border: 1px solid #e5e9f0;
-      background: #fff;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      background: var(--card);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    th, td {
-      text-align: left;
-      border-bottom: 1px solid var(--line);
-      padding: 10px 12px;
-      font-size: 14px;
-    }
-    th { background: #f3f6fb; }
-    .checklist li { margin: 4px 0; }
-    .mono { font-family: Consolas, "Courier New", monospace; }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <section class="hero">
-      <h1>Part 1 Results: Neural Field Fitting</h1>
-      <p>
-        Report for fitting a coordinate-based neural field (MLP + sinusoidal positional encoding) to a 2D image.
-        This page includes all requested deliverables: architecture summary, progression on provided image,
-        2x2 hyperparameter grid, and PSNR curves.
-      </p>
-      <p class="mono">Source notebook: main.ipynb</p>
-    </section>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Part 1 Neural Field Report</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --panel: #fffdf8;
+        --ink: #1f2933;
+        --muted: #5b6875;
+        --line: #ddd3c4;
+        --accent: #bb5a3c;
+        --accent-soft: #f4d8cf;
+        --shadow: 0 18px 40px rgba(31, 41, 51, 0.08);
+      }
 
-    <h2>Deliverables Checklist</h2>
-    <ul class="checklist">
-      <li>Model architecture details (layers, width, learning rate): included below.</li>
-      <li>Training progression for provided image: included.</li>
-      <li>Final 2x2 hyperparameter grid (2 choices of L x 2 choices of width): included.</li>
-      <li>PSNR curve for a selected run: included (baseline and HQ).</li>
-    </ul>
+      * {
+        box-sizing: border-box;
+      }
 
-    <h2>Headline Metrics</h2>
-    <div class="grid">
-      <div class="card">
-        <div>Baseline PSNR (L=10, width=256)</div>
-        <div class="kpi">25.43 dB</div>
-        <div class="mono">MSE: 0.002867</div>
-      </div>
-      <div class="card">
-        <div>High-Quality PSNR (L=12, width=384)</div>
-        <div class="kpi">27.37 dB</div>
-        <div class="mono">MSE: 0.001832</div>
-      </div>
-    </div>
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, #f8e7d7 0, transparent 28%),
+          radial-gradient(circle at top right, #e4efe8 0, transparent 24%),
+          var(--bg);
+      }
 
-    <h2>Architecture and Training Setup</h2>
-    <div class="card">
-      <h3>Baseline Run</h3>
-      <table>
-        <tr><th>Parameter</th><th>Value</th></tr>
-        <tr><td>Positional encoding L</td><td>10</td></tr>
-        <tr><td>Width</td><td>256</td></tr>
-        <tr><td>Hidden layers</td><td>4</td></tr>
-        <tr><td>Learning rate</td><td>0.01</td></tr>
-        <tr><td>Minimum learning rate</td><td>0.0004</td></tr>
-        <tr><td>Steps</td><td>1800</td></tr>
-        <tr><td>Batch size</td><td>8000</td></tr>
-        <tr><td>Loss / Metric</td><td>MSE / PSNR</td></tr>
-      </table>
+      .page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px 72px;
+      }
 
-      <h3>High-Quality Run</h3>
-      <table>
-        <tr><th>Parameter</th><th>Value</th></tr>
-        <tr><td>Positional encoding L</td><td>12</td></tr>
-        <tr><td>Width</td><td>384</td></tr>
-        <tr><td>Hidden layers</td><td>5</td></tr>
-        <tr><td>Learning rate</td><td>0.008</td></tr>
-        <tr><td>Minimum learning rate</td><td>0.0002</td></tr>
-        <tr><td>Steps</td><td>2600</td></tr>
-        <tr><td>Batch size</td><td>10000</td></tr>
-        <tr><td>Best-checkpoint restore</td><td>Enabled (best step: 2600)</td></tr>
-      </table>
-    </div>
+      .hero {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 253, 248, 0.96),
+          rgba(249, 239, 228, 0.96)
+        );
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        padding: 36px;
+        box-shadow: var(--shadow);
+      }
 
-    <h2>Provided Image: Training Progression</h2>
-    <div class="figure">
-      <h3>Baseline Progression</h3>
-      <img src="images/output/part1_neural_field/baseline_progression.png" alt="Baseline progression on provided image" />
-    </div>
-    <div class="figure">
-      <h3>High-Quality Progression</h3>
-      <img src="images/output/part1_neural_field/hq_progression.png" alt="High-quality progression on provided image" />
-    </div>
+      .eyebrow {
+        margin: 0 0 10px;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
 
-    <h2>PSNR Curves</h2>
-    <div class="figure">
-      <h3>Baseline PSNR Curve</h3>
-      <img src="images/output/part1_neural_field/baseline_psnr_curve.png" alt="Baseline PSNR curve" />
-    </div>
-    <div class="figure">
-      <h3>High-Quality PSNR Curve</h3>
-      <img src="images/output/part1_neural_field/hq_psnr_curve.png" alt="High-quality PSNR curve" />
-    </div>
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
 
-    <h2>2x2 Hyperparameter Grid</h2>
-    <div class="figure">
-      <img src="images/output/part1_neural_field/grid_2x2_results.png" alt="2x2 hyperparameter results grid" />
-    </div>
+      h1 {
+        margin-bottom: 12px;
+        font-size: clamp(2.2rem, 4vw, 4rem);
+        line-height: 0.98;
+      }
 
-    <h3>Grid Numeric Results</h3>
-    <table>
-      <tr><th>L</th><th>Width</th><th>PSNR (dB)</th><th>MSE</th></tr>
-      <tr><td>4</td><td>128</td><td>24.43</td><td>0.003602</td></tr>
-      <tr><td>4</td><td>256</td><td>24.06</td><td>0.003925</td></tr>
-      <tr><td>10</td><td>128</td><td>25.35</td><td>0.002920</td></tr>
-      <tr><td>10</td><td>256</td><td>25.70</td><td>0.002689</td></tr>
-    </table>
+      .lead {
+        max-width: 800px;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: var(--muted);
+      }
 
-    <h2>Final Reconstructions</h2>
-    <div class="grid">
-      <div class="figure">
-        <h3>Baseline Final</h3>
-        <img src="images/output/part1_neural_field/baseline_final.png" alt="Baseline final reconstruction" />
-      </div>
-      <div class="figure">
-        <h3>High-Quality Final</h3>
-        <img src="images/output/part1_neural_field/hq_final.png" alt="High-quality final reconstruction" />
-      </div>
-    </div>
+      .section {
+        margin-top: 28px;
+        background: rgba(255, 253, 248, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+      }
 
-    <p style="margin-top:18px;" class="mono">Metrics source: images/output/part1_neural_field/report_metrics.json</p>
-  </div>
-</body>
+      .section-title {
+        margin-bottom: 18px;
+        font-size: 1.6rem;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+      }
+
+      .stat {
+        padding: 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+      }
+
+      .stat-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      .stat-value {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--accent);
+      }
+
+      .media-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+      }
+
+      .media-grid.large {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .card-copy {
+        padding: 16px 18px 8px;
+      }
+
+      .card h3 {
+        margin-bottom: 6px;
+        font-size: 1.1rem;
+      }
+
+      .card p,
+      li {
+        color: var(--muted);
+        line-height: 1.6;
+        font-size: 0.95rem;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-top: 1px solid var(--line);
+        background: #f7f2ea;
+      }
+
+      .projection-card img {
+        min-height: 0;
+        object-fit: contain;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 16px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+      }
+
+      th,
+      td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.95rem;
+      }
+
+      th {
+        background: #f8f0e8;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      code {
+        padding: 0.15rem 0.35rem;
+        border-radius: 6px;
+        background: var(--accent-soft);
+        font-family: Consolas, monospace;
+        font-size: 0.92em;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">Part 1 Output Showcase</p>
+        <h1>Neural Field Results</h1>
+        <p class="lead">
+          This report summarizes the Part 1 baseline and high-quality runs, including the final
+          reconstructions, training progressions, PSNR curves, and the 2x2 hyperparameter grid.
+          Source metrics were saved in
+          <code>images/output/part1_neural_field/report_metrics.json</code>.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Baseline vs HQ Summary</h2>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Baseline PSNR</span>
+            <span class="stat-value">25.43 dB</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">HQ PSNR</span>
+            <span class="stat-value">27.37 dB</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">PSNR Improvement</span>
+            <span class="stat-value">+1.95 dB</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Baseline MSE</span>
+            <span class="stat-value">0.002867</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">HQ MSE</span>
+            <span class="stat-value">0.001832</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">MSE Change</span>
+            <span class="stat-value">-0.001035</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Configuration Diff</h2>
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Baseline</th>
+            <th>HQ</th>
+          </tr>
+          <tr><td>L</td><td>10</td><td>12</td></tr>
+          <tr><td>Width</td><td>256</td><td>384</td></tr>
+          <tr><td>Hidden layers</td><td>4</td><td>5</td></tr>
+          <tr><td>LR</td><td>0.01</td><td>0.008</td></tr>
+          <tr><td>Min LR</td><td>0.0004</td><td>0.0002</td></tr>
+          <tr><td>Steps</td><td>1800</td><td>2600</td></tr>
+          <tr><td>Batch size</td><td>8000</td><td>10000</td></tr>
+        </table>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Final Reconstructions</h2>
+        <div class="media-grid">
+          <article class="card">
+            <div class="card-copy">
+              <h3>Baseline Final</h3>
+              <p>Final baseline reconstruction using the selected baseline configuration.</p>
+            </div>
+            <img src="images/output/part1_neural_field/baseline_final.png" alt="Baseline final" />
+          </article>
+          <article class="card">
+            <div class="card-copy">
+              <h3>HQ Final</h3>
+              <p>Final high-quality reconstruction after the stronger configuration run.</p>
+            </div>
+            <img src="images/output/part1_neural_field/hq_final.png" alt="HQ final" />
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Training Progressions</h2>
+        <div class="media-grid large">
+          <article class="card projection-card">
+            <div class="card-copy">
+              <h3>Baseline Progression</h3>
+              <p>Baseline training snapshots over time.</p>
+            </div>
+            <img src="images/output/part1_neural_field/baseline_progression.png" alt="Baseline progression" />
+          </article>
+          <article class="card projection-card">
+            <div class="card-copy">
+              <h3>HQ Progression</h3>
+              <p>High-quality training snapshots over time.</p>
+            </div>
+            <img src="images/output/part1_neural_field/hq_progression.png" alt="HQ progression" />
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">PSNR Curves</h2>
+        <div class="media-grid">
+          <article class="card">
+            <div class="card-copy">
+              <h3>Baseline PSNR Curve</h3>
+              <p>Validation quality for the baseline run.</p>
+            </div>
+            <img src="images/output/part1_neural_field/baseline_psnr_curve.png" alt="Baseline PSNR curve" />
+          </article>
+          <article class="card">
+            <div class="card-copy">
+              <h3>HQ PSNR Curve</h3>
+              <p>Validation quality for the high-quality run.</p>
+            </div>
+            <img src="images/output/part1_neural_field/hq_psnr_curve.png" alt="HQ PSNR curve" />
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">2x2 Hyperparameter Grid</h2>
+        <div class="card">
+          <div class="card-copy">
+            <h3>Grid Search Overview</h3>
+            <p>The four-run grid comparing two values of <code>L</code> and two width values.</p>
+          </div>
+          <img src="images/output/part1_neural_field/grid_2x2_results.png" alt="Grid 2x2 results" />
+        </div>
+        <p class="lead" style="margin-top: 18px;">
+          Best grid config: <code>L=10</code>, <code>width=256</code>, <code>PSNR=25.70 dB</code>.
+        </p>
+        <table>
+          <tr>
+            <th>L</th>
+            <th>Width</th>
+            <th>PSNR (dB)</th>
+            <th>MSE</th>
+          </tr>
+          <tr><td>10</td><td>256</td><td>25.70</td><td>0.002689</td></tr>
+          <tr><td>10</td><td>128</td><td>25.35</td><td>0.002920</td></tr>
+          <tr><td>4</td><td>128</td><td>24.43</td><td>0.003602</td></tr>
+          <tr><td>4</td><td>256</td><td>24.06</td><td>0.003925</td></tr>
+        </table>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Deliverables Coverage</h2>
+        <ul>
+          <li>Model architecture details are captured in the configuration diff table.</li>
+          <li>Training progression on the provided image is shown for both baseline and HQ runs.</li>
+          <li>Final 2x2 results for two <code>L</code> values and two width values are shown with the grid figure and summary table.</li>
+          <li>PSNR curves for the selected runs are included as dedicated plots.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
 </html>
