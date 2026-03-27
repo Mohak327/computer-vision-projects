@@ -23,6 +23,19 @@ class Config:
     port: int = 8080
 
 
+def make_viser_server(port: int, share: bool = True) -> viser.ViserServer:
+    """Create and return a Viser server instance."""
+    server = viser.ViserServer(port=port, share=share)
+    return server
+
+
+def start_viser_server(port: int, share: bool = True) -> viser.ViserServer:
+    """Create, start, and return a Viser server instance."""
+    server = make_viser_server(port=port, share=share)
+    print(f"Viser server running on port {port}. Press Ctrl+C to stop.")
+    return server
+
+
 def main(cfg: Config):
     images_train, c2ws_train, images_val, c2ws_val, c2ws_test, K = load_data(data_path=cfg.data_path)
 
@@ -74,7 +87,7 @@ def main(cfg: Config):
     c2ws_np = c2ws_train_t.cpu().detach().numpy()
     K_np = K_t.cpu().detach().numpy()
 
-    server = viser.ViserServer(port=cfg.port, share=True)
+    server = start_viser_server(port=cfg.port, share=True)
 
     fov = float(2 * np.arctan2(H / 2, K_np[0, 0]))
     aspect = float(W / H)
@@ -109,7 +122,6 @@ def main(cfg: Config):
         f"Visualizing rays from cameras [{cam_start}, {cam_end - 1}] "
         f"({cam_count} camera(s))."
     )
-    print(f"Viser server running on port {cfg.port}. Press Ctrl+C to stop.")
     while True:
         time.sleep(0.1)
 
