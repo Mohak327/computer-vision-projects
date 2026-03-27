@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Part 2 NeRF 3D Reconstruction Report</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --panel: #fffdf8;
+      --ink: #1f2933;
+      --muted: #5b6875;
+      --line: #ddd3c4;
+      --accent: #bb5a3c;
+      --accent-soft: #f4d8cf;
+      --shadow: 0 18px 40px rgba(31, 41, 51, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, #f8e7d7 0, transparent 28%),
+        radial-gradient(circle at top right, #e4efe8 0, transparent 24%),
+        var(--bg);
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 72px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255, 253, 248, 0.96), rgba(249, 239, 228, 0.96));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 36px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 0.98;
+    }
+
+    .lead {
+      max-width: 760px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .section {
+      margin-top: 28px;
+      background: rgba(255, 253, 248, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      margin-bottom: 18px;
+      font-size: 1.6rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .card-copy {
+      padding: 16px 18px 8px;
+    }
+
+    .card h3 {
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-top: 1px solid var(--line);
+      background: #f7f2ea;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .thumb {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .thumb span {
+      display: block;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    code {
+      padding: 0.15rem 0.35rem;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      font-family: Consolas, monospace;
+      font-size: 0.92em;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="eyebrow">Part 2 Output Showcase</p>
+      <h1>NeRF 3D Reconstruction</h1>
+      <p class="lead">
+        This report showcases the saved artifacts from the Part 2 reconstruction run in
+        <code>images/output/part2_3d_reconstruction</code>: training curves, validation progress renders,
+        and the final RGB/depth novel-view trajectories.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Run Summary</h2>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Best PSNR</span>
+          <span class="stat-value">23.95 dB</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Best Step</span>
+          <span class="stat-value">4000</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Final Loss</span>
+          <span class="stat-value">0.00514</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Near / Far</span>
+          <span class="stat-value">2.016 / 6.047</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Steps</span>
+          <span class="stat-value">5000</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Avg Step Time</span>
+          <span class="stat-value">0.252 s</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Training Curves</h2>
+      <div class="media-grid">
+        <article class="card">
+          <div class="card-copy">
+            <h3>Loss Curve</h3>
+            <p>The training loss over optimization steps.</p>
+          </div>
+          <img src="images/output/part2_3d_reconstruction/loss_curve.png" alt="Training loss curve">
+        </article>
+        <article class="card">
+          <div class="card-copy">
+            <h3>Validation PSNR</h3>
+            <p>Validation quality tracked across evaluation checkpoints.</p>
+          </div>
+          <img src="images/output/part2_3d_reconstruction/psnr_curve.png" alt="Validation PSNR curve">
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Rendered Trajectories</h2>
+      <div class="media-grid">
+        <article class="card">
+          <div class="card-copy">
+            <h3>RGB Novel-View Trajectory</h3>
+            <p>The final rendered RGB flythrough assembled from the saved test views.</p>
+          </div>
+          <img src="images/output/part2_3d_reconstruction/test_rgb.gif" alt="RGB trajectory GIF">
+        </article>
+        <article class="card">
+          <div class="card-copy">
+            <h3>Depth Trajectory</h3>
+            <p>The matching depth trajectory rendered from the same camera path.</p>
+          </div>
+          <img src="images/output/part2_3d_reconstruction/test_depth.gif" alt="Depth trajectory GIF">
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Validation Progress Renders</h2>
+      <p class="lead">
+        These snapshots show how the validation render sharpened throughout training.
+      </p>
+      <div class="gallery">
+        <figure class="thumb">
+          <img src="images/output/part2_3d_reconstruction/progress_renders/step_0250.png" alt="Progress render step 250">
+          <span>Step 250</span>
+        </figure>
+        <figure class="thumb">
+          <img src="images/output/part2_3d_reconstruction/progress_renders/step_1000.png" alt="Progress render step 1000">
+          <span>Step 1000</span>
+        </figure>
+        <figure class="thumb">
+          <img src="images/output/part2_3d_reconstruction/progress_renders/step_2000.png" alt="Progress render step 2000">
+          <span>Step 2000</span>
+        </figure>
+        <figure class="thumb">
+          <img src="images/output/part2_3d_reconstruction/progress_renders/step_3000.png" alt="Progress render step 3000">
+          <span>Step 3000</span>
+        </figure>
+        <figure class="thumb">
+          <img src="images/output/part2_3d_reconstruction/progress_renders/step_4000.png" alt="Progress render step 4000">
+          <span>Step 4000</span>
+        </figure>
+        <figure class="thumb">
+          <img src="images/output/part2_3d_reconstruction/progress_renders/step_5000.png" alt="Progress render step 5000">
+          <span>Step 5000</span>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Viser Views</h2>
+      <p class="lead">
+        These saved screenshots capture the interactive Viser visualization used to inspect the
+        reconstruction setup and camera/ray geometry.
+      </p>
+      <div class="media-grid">
+        <article class="card">
+          <div class="card-copy">
+            <h3>Viser Screenshot 1</h3>
+            <p>First saved view from the Viser scene.</p>
+          </div>
+          <img src="images/output/part2_3d_reconstruction/viser/viser_1.png" alt="Viser screenshot 1">
+        </article>
+        <article class="card">
+          <div class="card-copy">
+            <h3>Viser Screenshot 2</h3>
+            <p>Second saved view highlighting the interactive 3D inspection setup.</p>
+          </div>
+          <img src="images/output/part2_3d_reconstruction/viser/viser_2.png" alt="Viser screenshot 2">
+        </article>
+        <article class="card">
+          <div class="card-copy">
+            <h3>Viser Screenshot 3</h3>
+            <p>Third saved view from the Viser reconstruction workspace.</p>
+          </div>
+          <img src="images/output/part2_3d_reconstruction/viser/viser_3.png" alt="Viser screenshot 3">
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Saved Artifacts</h2>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Metrics JSON</span>
+          <span class="stat-value">report_metrics.json</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Checkpoint</span>
+          <span class="stat-value">checkpoint_best.pt</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">RGB Frames</span>
+          <span class="stat-value">60 PNG + 60 NPY</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Depth Frames</span>
+          <span class="stat-value">60 PNG + 60 NPY</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Viser Screenshots</span>
+          <span class="stat-value">3 PNG</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
