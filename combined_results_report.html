@@ -301,10 +301,9 @@
   <body>
     <main class="page">
       <section class="hero">
-        <p class="eyebrow">Merged Showcase</p>
+        <p class="eyebrow">Computer Vision - II (HW4)</p>
         <h1>Neural Radiance Fields</h1>
-        
-        
+        <p class="eyebrow">Submitted By: Mohak Sharma (ms7306)</p>
       </section>
 
       <details class="accordion" open>
@@ -313,9 +312,7 @@
             <div class="summary-copy">
               <p class="eyebrow">Part 1</p>
               <h2 class="summary-title">NeRF: 2D Reconstruction</h2>
-              <p class="summary-meta">
-                Fit a Neural Field to a 2D Image.
-              </p>
+              <p class="summary-meta">Fit a Neural Field to a 2D Image.</p>
             </div>
             <div class="summary-chip">Read</div>
           </div>
@@ -324,26 +321,76 @@
           <section class="section">
             <h2 class="section-title">Baseline vs HQ Summary</h2>
             <div class="stats">
-              <div class="stat"><span class="stat-label">Baseline PSNR</span><span class="stat-value">25.43 dB</span></div>
-              <div class="stat"><span class="stat-label">HQ PSNR</span><span class="stat-value">27.37 dB</span></div>
-              <div class="stat"><span class="stat-label">PSNR Improvement</span><span class="stat-value">+1.95 dB</span></div>
-              <div class="stat"><span class="stat-label">Baseline MSE</span><span class="stat-value">0.002867</span></div>
-              <div class="stat"><span class="stat-label">HQ MSE</span><span class="stat-value">0.001832</span></div>
-              <div class="stat"><span class="stat-label">MSE Change</span><span class="stat-value">-0.001035</span></div>
+              <div class="stat">
+                <span class="stat-label">Baseline PSNR</span
+                ><span class="stat-value">25.43 dB</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">HQ PSNR</span
+                ><span class="stat-value">27.37 dB</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">PSNR Improvement</span
+                ><span class="stat-value">+1.95 dB</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Baseline MSE</span
+                ><span class="stat-value">0.002867</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">HQ MSE</span
+                ><span class="stat-value">0.001832</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">MSE Change</span
+                ><span class="stat-value">-0.001035</span>
+              </div>
             </div>
           </section>
 
           <section class="section">
             <h2 class="section-title">Configuration Diff</h2>
             <table>
-              <tr><th>Field</th><th>Baseline</th><th>HQ</th></tr>
-              <tr><td>L</td><td>10</td><td>12</td></tr>
-              <tr><td>Width</td><td>256</td><td>384</td></tr>
-              <tr><td>Hidden layers</td><td>4</td><td>5</td></tr>
-              <tr><td>LR</td><td>0.01</td><td>0.008</td></tr>
-              <tr><td>Min LR</td><td>0.0004</td><td>0.0002</td></tr>
-              <tr><td>Steps</td><td>1800</td><td>2600</td></tr>
-              <tr><td>Batch size</td><td>8000</td><td>10000</td></tr>
+              <tr>
+                <th>Field</th>
+                <th>Baseline</th>
+                <th>High Quality (HQ)</th>
+              </tr>
+              <tr>
+                <td>L</td>
+                <td>10</td>
+                <td>12</td>
+              </tr>
+              <tr>
+                <td>Width</td>
+                <td>256</td>
+                <td>384</td>
+              </tr>
+              <tr>
+                <td>Hidden layers</td>
+                <td>4</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>LR</td>
+                <td>0.01</td>
+                <td>0.008</td>
+              </tr>
+              <tr>
+                <td>Min LR</td>
+                <td>0.0004</td>
+                <td>0.0002</td>
+              </tr>
+              <tr>
+                <td>Steps</td>
+                <td>1800</td>
+                <td>2600</td>
+              </tr>
+              <tr>
+                <td>Batch size</td>
+                <td>8000</td>
+                <td>10000</td>
+              </tr>
             </table>
           </section>
 
@@ -353,16 +400,28 @@
               <article class="card">
                 <div class="card-copy">
                   <h3>Baseline Final</h3>
-                  <p>Final baseline reconstruction using the selected baseline configuration.</p>
+                  <p>
+                    Final baseline reconstruction using the selected baseline
+                    configuration.
+                  </p>
                 </div>
-                <img src="images/output/part1_neural_field/baseline_final.png" alt="Baseline final" />
+                <img
+                  src="images/output/part1_neural_field/baseline_final.png"
+                  alt="Baseline final"
+                />
               </article>
               <article class="card">
                 <div class="card-copy">
                   <h3>HQ Final</h3>
-                  <p>Final high-quality reconstruction after the stronger configuration run.</p>
+                  <p>
+                    Final high-quality reconstruction after the stronger
+                    configuration run.
+                  </p>
                 </div>
-                <img src="images/output/part1_neural_field/hq_final.png" alt="HQ final" />
+                <img
+                  src="images/output/part1_neural_field/hq_final.png"
+                  alt="HQ final"
+                />
               </article>
             </div>
           </section>
@@ -375,14 +434,20 @@
                   <h3>Baseline Progression</h3>
                   <p>Baseline training snapshots over time.</p>
                 </div>
-                <img src="images/output/part1_neural_field/baseline_progression.png" alt="Baseline progression" />
+                <img
+                  src="images/output/part1_neural_field/baseline_progression.png"
+                  alt="Baseline progression"
+                />
               </article>
               <article class="card projection-card">
                 <div class="card-copy">
                   <h3>HQ Progression</h3>
                   <p>High-quality training snapshots over time.</p>
                 </div>
-                <img src="images/output/part1_neural_field/hq_progression.png" alt="HQ progression" />
+                <img
+                  src="images/output/part1_neural_field/hq_progression.png"
+                  alt="HQ progression"
+                />
               </article>
             </div>
           </section>
@@ -395,14 +460,20 @@
                   <h3>Baseline PSNR Curve</h3>
                   <p>Validation quality for the baseline run.</p>
                 </div>
-                <img src="images/output/part1_neural_field/baseline_psnr_curve.png" alt="Baseline PSNR curve" />
+                <img
+                  src="images/output/part1_neural_field/baseline_psnr_curve.png"
+                  alt="Baseline PSNR curve"
+                />
               </article>
               <article class="card">
                 <div class="card-copy">
                   <h3>HQ PSNR Curve</h3>
                   <p>Validation quality for the high-quality run.</p>
                 </div>
-                <img src="images/output/part1_neural_field/hq_psnr_curve.png" alt="HQ PSNR curve" />
+                <img
+                  src="images/output/part1_neural_field/hq_psnr_curve.png"
+                  alt="HQ PSNR curve"
+                />
               </article>
             </div>
           </section>
@@ -412,29 +483,73 @@
             <div class="card">
               <div class="card-copy">
                 <h3>Grid Search Overview</h3>
-                <p>The four-run grid comparing two values of <code>L</code> and two width values.</p>
+                <p>
+                  The four-run grid comparing two values of <code>L</code> and
+                  two width values.
+                </p>
               </div>
-              <img src="images/output/part1_neural_field/grid_2x2_results.png" alt="Grid 2x2 results" />
+              <img
+                src="images/output/part1_neural_field/grid_2x2_results.png"
+                alt="Grid 2x2 results"
+              />
             </div>
-            <p class="lead" style="margin-top: 18px;">
-              Best grid config: <code>L=10</code>, <code>width=256</code>, <code>PSNR=25.70 dB</code>.
+            <p class="lead" style="margin-top: 18px">
+              Best grid config: <code>L=10</code>, <code>width=256</code>,
+              <code>PSNR=25.70 dB</code>.
             </p>
             <table>
-              <tr><th>L</th><th>Width</th><th>PSNR (dB)</th><th>MSE</th></tr>
-              <tr><td>10</td><td>256</td><td>25.70</td><td>0.002689</td></tr>
-              <tr><td>10</td><td>128</td><td>25.35</td><td>0.002920</td></tr>
-              <tr><td>4</td><td>128</td><td>24.43</td><td>0.003602</td></tr>
-              <tr><td>4</td><td>256</td><td>24.06</td><td>0.003925</td></tr>
+              <tr>
+                <th>L</th>
+                <th>Width</th>
+                <th>PSNR (dB)</th>
+                <th>MSE</th>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>256</td>
+                <td>25.70</td>
+                <td>0.002689</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>128</td>
+                <td>25.35</td>
+                <td>0.002920</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>128</td>
+                <td>24.43</td>
+                <td>0.003602</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>256</td>
+                <td>24.06</td>
+                <td>0.003925</td>
+              </tr>
             </table>
           </section>
 
           <section class="section">
             <h2 class="section-title">Deliverables Coverage</h2>
             <ul>
-              <li>Model architecture details are captured in the configuration diff table.</li>
-              <li>Training progression on the provided image is shown for both baseline and HQ runs.</li>
-              <li>Final 2x2 results for two <code>L</code> values and two width values are shown with the grid figure and summary table.</li>
-              <li>PSNR curves for the selected runs are included as dedicated plots.</li>
+              <li>
+                Model architecture details are captured in the configuration
+                diff table.
+              </li>
+              <li>
+                Training progression on the provided image is shown for both
+                baseline and HQ runs.
+              </li>
+              <li>
+                Final 2x2 results for two <code>L</code> values and two width
+                values are shown with the grid figure and summary table.
+              </li>
+              <li>
+                PSNR curves for the selected runs are included as dedicated
+                plots.
+              </li>
             </ul>
           </section>
         </div>
@@ -457,32 +572,61 @@
           <section class="section">
             <h2 class="section-title">Run Summary</h2>
             <div class="stats">
-              <div class="stat"><span class="stat-label">Best PSNR</span><span class="stat-value">23.95 dB</span></div>
-              <div class="stat"><span class="stat-label">Best Step</span><span class="stat-value">4000</span></div>
-              <div class="stat"><span class="stat-label">Final Loss</span><span class="stat-value">0.00514</span></div>
-              <div class="stat"><span class="stat-label">Near / Far</span><span class="stat-value">2.016 / 6.047</span></div>
-              <div class="stat"><span class="stat-label">Steps</span><span class="stat-value">5000</span></div>
-              <div class="stat"><span class="stat-label">Avg Step Time</span><span class="stat-value">0.252 s</span></div>
+              <div class="stat">
+                <span class="stat-label">Best PSNR</span
+                ><span class="stat-value">23.95 dB</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Best Step</span
+                ><span class="stat-value">4000</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Final Loss</span
+                ><span class="stat-value">0.00514</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Near / Far</span
+                ><span class="stat-value">2.016 / 6.047</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Steps</span
+                ><span class="stat-value">5000</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Avg Step Time</span
+                ><span class="stat-value">0.252 s</span>
+              </div>
             </div>
           </section>
 
           <section class="section">
             <h2 class="section-title">Viser Views</h2>
             <p class="lead">
-              These saved screenshots capture the interactive Viser visualization used to inspect the reconstruction setup and camera/ray geometry.
+              These saved screenshots capture the interactive Viser
+              visualization used to inspect the reconstruction setup and
+              camera/ray geometry.
             </p>
             <div class="media-grid">
               <article class="card">
-                <div class="card-copy"><h3>Viser Screenshot 1</h3><p>First saved view from the Viser scene.</p></div>
-                <img src="images/output/part2_3d_reconstruction/viser/viser_1.png" alt="Viser screenshot 1" />
+                <div class="card-copy"><h3>Viser Screenshot 1</h3></div>
+                <img
+                  src="images/output/part2_3d_reconstruction/viser/viser_1.png"
+                  alt="Viser screenshot 1"
+                />
               </article>
               <article class="card">
-                <div class="card-copy"><h3>Viser Screenshot 2</h3><p>Second saved view highlighting the interactive 3D inspection setup.</p></div>
-                <img src="images/output/part2_3d_reconstruction/viser/viser_2.png" alt="Viser screenshot 2" />
+                <div class="card-copy"><h3>Viser Screenshot 2</h3></div>
+                <img
+                  src="images/output/part2_3d_reconstruction/viser/viser_2.png"
+                  alt="Viser screenshot 2"
+                />
               </article>
               <article class="card">
-                <div class="card-copy"><h3>Viser Screenshot 3</h3><p>Third saved view from the Viser reconstruction workspace.</p></div>
-                <img src="images/output/part2_3d_reconstruction/viser/viser_3.png" alt="Viser screenshot 3" />
+                <div class="card-copy"><h3>Viser Screenshot 3</h3></div>
+                <img
+                  src="images/output/part2_3d_reconstruction/viser/viser_3.png"
+                  alt="Viser screenshot 3"
+                />
               </article>
             </div>
           </section>
@@ -491,13 +635,73 @@
             <h2 class="section-title">Training Curves</h2>
             <div class="media-grid">
               <article class="card">
-                <div class="card-copy"><h3>Loss Curve</h3><p>The training loss over optimization steps.</p></div>
-                <img src="images/output/part2_3d_reconstruction/loss_curve.png" alt="Training loss curve" />
+                <div class="card-copy">
+                  <h3>Loss Curve</h3>
+                  <p>The training loss over optimization steps.</p>
+                </div>
+                <img
+                  src="images/output/part2_3d_reconstruction/loss_curve.png"
+                  alt="Training loss curve"
+                />
               </article>
               <article class="card">
-                <div class="card-copy"><h3>Validation PSNR</h3><p>Validation quality tracked across evaluation checkpoints.</p></div>
-                <img src="images/output/part2_3d_reconstruction/psnr_curve.png" alt="Validation PSNR curve" />
+                <div class="card-copy">
+                  <h3>Validation PSNR</h3>
+                  <p>
+                    Validation quality tracked across evaluation checkpoints.
+                  </p>
+                </div>
+                <img
+                  src="images/output/part2_3d_reconstruction/psnr_curve.png"
+                  alt="Validation PSNR curve"
+                />
               </article>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2 class="section-title">Validation Progress Renders</h2>
+            <p class="lead">
+              These snapshots show how the validation render sharpened
+              throughout training.
+            </p>
+            <div class="gallery">
+              <figure class="thumb">
+                <img
+                  src="images/output/part2_3d_reconstruction/progress_renders/step_0250.png"
+                  alt="Progress render step 250"
+                /><span>Step 250</span>
+              </figure>
+              <figure class="thumb">
+                <img
+                  src="images/output/part2_3d_reconstruction/progress_renders/step_1000.png"
+                  alt="Progress render step 1000"
+                /><span>Step 1000</span>
+              </figure>
+              <figure class="thumb">
+                <img
+                  src="images/output/part2_3d_reconstruction/progress_renders/step_2000.png"
+                  alt="Progress render step 2000"
+                /><span>Step 2000</span>
+              </figure>
+              <figure class="thumb">
+                <img
+                  src="images/output/part2_3d_reconstruction/progress_renders/step_3000.png"
+                  alt="Progress render step 3000"
+                /><span>Step 3000</span>
+              </figure>
+              <figure class="thumb">
+                <img
+                  src="images/output/part2_3d_reconstruction/progress_renders/step_4000.png"
+                  alt="Progress render step 4000"
+                /><span>Step 4000</span>
+              </figure>
+              <figure class="thumb">
+                <img
+                  src="images/output/part2_3d_reconstruction/progress_renders/step_5000.png"
+                  alt="Progress render step 5000"
+                /><span>Step 5000</span>
+              </figure>
             </div>
           </section>
 
@@ -505,29 +709,37 @@
             <h2 class="section-title">Rendered Trajectories</h2>
             <div class="media-grid">
               <article class="card">
-                <div class="card-copy"><h3>RGB Novel-View Trajectory</h3><p>The final rendered RGB flythrough assembled from the saved test views.</p></div>
-                <img src="images/output/part2_3d_reconstruction/test_rgb.gif" alt="RGB trajectory GIF" class="looping-gif" data-loop-ms="6000" />
+                <div class="card-copy">
+                  <h3>RGB Novel-View Trajectory</h3>
+                  <p>
+                    The final rendered RGB flythrough assembled from the test
+                    views.
+                  </p>
+                </div>
+                <img
+                  src="images/output/part2_3d_reconstruction/test_rgb.gif"
+                  alt="RGB trajectory GIF"
+                  class="looping-gif"
+                  data-loop-ms="6000"
+                />
               </article>
               <article class="card">
-                <div class="card-copy"><h3>Depth Trajectory</h3><p>The matching depth trajectory rendered from the same camera path.</p></div>
-                <img src="images/output/part2_3d_reconstruction/test_depth.gif" alt="Depth trajectory GIF" class="looping-gif" data-loop-ms="6000" />
+                <div class="card-copy">
+                  <h3>Depth Trajectory</h3>
+                  <p>
+                    The matching depth trajectory rendered from the same camera
+                    path.
+                  </p>
+                </div>
+                <img
+                  src="images/output/part2_3d_reconstruction/test_depth.gif"
+                  alt="Depth trajectory GIF"
+                  class="looping-gif"
+                  data-loop-ms="6000"
+                />
               </article>
             </div>
           </section>
-
-          <section class="section">
-            <h2 class="section-title">Validation Progress Renders</h2>
-            <p class="lead">These snapshots show how the validation render sharpened throughout training.</p>
-            <div class="gallery">
-              <figure class="thumb"><img src="images/output/part2_3d_reconstruction/progress_renders/step_0250.png" alt="Progress render step 250" /><span>Step 250</span></figure>
-              <figure class="thumb"><img src="images/output/part2_3d_reconstruction/progress_renders/step_1000.png" alt="Progress render step 1000" /><span>Step 1000</span></figure>
-              <figure class="thumb"><img src="images/output/part2_3d_reconstruction/progress_renders/step_2000.png" alt="Progress render step 2000" /><span>Step 2000</span></figure>
-              <figure class="thumb"><img src="images/output/part2_3d_reconstruction/progress_renders/step_3000.png" alt="Progress render step 3000" /><span>Step 3000</span></figure>
-              <figure class="thumb"><img src="images/output/part2_3d_reconstruction/progress_renders/step_4000.png" alt="Progress render step 4000" /><span>Step 4000</span></figure>
-              <figure class="thumb"><img src="images/output/part2_3d_reconstruction/progress_renders/step_5000.png" alt="Progress render step 5000" /><span>Step 5000</span></figure>
-            </div>
-          </section>
-
         </div>
       </details>
     </main>
