@@ -1,0 +1,19 @@
+{
+  "prediction_mse": 0.17407457530498505,
+  "prediction_psnr": 7.640397071838379,
+  "temporal_smoothness": 0.0009716683998703957,
+  "mean_selectivity": 0.2294229120016098,
+  "max_selectivity": 0.8049103617668152,
+  "body_preferred_fraction": 0.25,
+  "best_loss": 0.1705329418182373,
+  "history_tail": [
+    {
+      "step": 1.0,
+      "loss": 0.1705329418182373
+    },
+    {
+      "step": 2.0,
+      "loss": 0.19955676794052124
+    }
+  ]
+}

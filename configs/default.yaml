@@ -1,0 +1,57 @@
+runtime:
+  seed: 7
+  device: cpu
+  output_root: outputs/default
+
+simulation:
+  backend: dm_control
+  fallback_backend: synthetic
+  image_height: 64
+  image_width: 64
+  n_cameras: 8
+  camera_radius: 3.0
+  camera_elevation_deg: 20.0
+  frames_per_motion: 48
+  motions: [walk, arm_raise, crouch]
+  dof: 17
+  body_mass: 75.0
+  noise_std: 0.01
+
+data:
+  root: outputs/default/dataset
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  preload_images: false
+  clip_length: 8
+  ray_batch_size: 1024
+
+nerf:
+  mode: pose
+  hidden_dim: 128
+  n_layers: 6
+  n_coarse: 24
+  n_fine: 24
+  steps: 40
+  eval_every: 10
+  checkpoint_every: 20
+
+physics:
+  enable: true
+  weight: 0.1
+  depth_weight: 0.5
+  silhouette_weight: 0.25
+  energy_weight: 1.0
+
+world_model:
+  hidden_channels: 24
+  gated_channels: 8
+  kernel_size: 5
+  steps: 30
+  clip_length: 8
+  batch_size: 2
+  lr: 0.001
+
+evaluation:
+  batch_size: 2
+  occlusion_threshold: 0.25

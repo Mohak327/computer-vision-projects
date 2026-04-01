@@ -1,209 +1,111 @@
-# Neural Fields and NeRF Reconstruction
+## 🦾 PhysNeRF + Body Schema via Visuomotor Prediction ##
 
-This repository contains both parts of the project:
 
-- Part 1: fit a 2D coordinate-based neural field to a single RGB image
-- Part 2: train a coarse-to-fine NeRF for 3D reconstruction and novel-view rendering
+The Idea: Build on your CLARISNet humanoid work — take the physics-simulated body (MuJoCo, 17-DOF) and train a neural field world model where the visual representation of the body emerges purely from visuomotor prediction loss (no explicit body model). The CV component is that the neural field must reconstruct the body's appearance and satisfy the rigid-body Hamiltonian constraints of its dynamics.
 
-The repo includes notebooks, modular Python helpers, saved output artifacts, and HTML reports for both parts.
+Why it fits you: Neural Fields as World Models (arXiv Feb 2026) shows that body-selective encoding emerges from visuomotor prediction in spatially structured neural dynamics. PHYRECON (NeurIPS 2024) shows physically plausible NeRF reconstruction via differentiable particle simulation, achieving >40% improvement in stability. You have both the NeRF code and the MuJoCo BCI pipeline — this is literally combining your two flagship projects.
 
----
+Physics angle: Hamiltonian Neural Networks for 6-DOF rigid body dynamics as the inductive bias in the world model.
 
-## Project Structure
+Novelty claim: Emergent body schema from visuomotor NeRF prediction, with Hamiltonian energy constraints enforcing physical plausibility of 3D body reconstruction.
 
-```text
-rgb-img-merging/
-|-- README.md
-|-- main_part1.ipynb
-|-- main_part2.ipynb
-|-- dataset_3d.py
-|-- nerf_model.py
-|-- rendering.py
-|-- train_part2.py
-|-- part2_utils.py
-|-- visualize_viser.py
-|-- lego_200x200.npz
-|-- part1_results_report.html
-|-- part1_results_diff_report.html
-|-- part2_results_report.html
-|-- combined_results_report.html
-`-- images/
-    |-- input/
-    `-- output/
-        |-- part1_neural_field/
-        `-- part2_3d_reconstruction/
-```
+***
 
----
+**Yes — completely buildable from scratch, and it's actually cleaner without CLARISNet code.** Here's the full picture:
 
-## Part 1 Summary
+***
 
-Part 1 fits an MLP with sinusoidal positional encoding directly to image coordinates so the network can reconstruct a 2D RGB image.
+## The Core Insight: MuJoCo IS Your CLARISNet Surrogate
 
-### Part 1 pipeline
+You don't need CLARISNet Phase 1 because the project's **novelty lives entirely in the visual/neural-field side**, not the EEG side. MuJoCo gives you ground-truth joint trajectories \(\theta(t)\) and rendered video for free — that's all the "BCI output" your CV project needs. The EEG decoding is CLARISNet's contribution; yours is **what the avatar sees and understands about its own body**.
 
-1. Load the source image from `images/input/part1/img_1.jpg`.
-2. Normalize RGB values to `[0, 1]`.
-3. Build a full normalized coordinate grid `(x, y)`.
-4. Apply sinusoidal positional encoding with frequency level `L`.
-5. Train an MLP to map encoded coordinates to RGB values.
-6. Randomly sample pixels each iteration for efficient optimization.
-7. Optimize with MSE loss and Adam.
-8. Track PSNR during training.
-9. Save progression renders, final reconstructions, and PSNR curves.
-10. Run a 2x2 hyperparameter comparison across two `L` values and two widths.
+***
 
-### Part 1 outputs
+## What You're Actually Building: **PhysNeRF-BS** *(Physics-Informed Neural Radiance Field for Body Schema)*
 
-Saved in `images/output/part1_neural_field/`:
+### The Three-Component Stack
 
-- `baseline_final.png`
-- `baseline_progression.png`
-- `baseline_psnr_curve.png`
-- `hq_final.png`
-- `hq_progression.png`
-- `hq_psnr_curve.png`
-- `grid_2x2_results.png`
-- `report_metrics.json`
+**Component 1 — Motor-Gated Neural Field World Model** *(the brain, from arXiv Feb 2026)*
 
-### Part 1 reported results
+The Feb 2026 "Neural Fields as World Models" paper  is your theoretical backbone. Their key finding: when you train a spatially structured neural field to *predict the visual consequences of motor commands*, **body-selective encoding emerges spontaneously** — the field discovers which pixels move contingently with motor signals. No explicit body model needed. [arxiv](https://arxiv.org/html/2602.18690v1)
 
-- Baseline PSNR: `25.43 dB`
-- High-quality PSNR: `27.37 dB`
-- Improvement over baseline: `+1.95 dB`
-- Best grid config: `L=10`, `width=256`, `PSNR=25.70 dB`
+You re-implement this but swap their simple 2D ball environment for a **MuJoCo humanoid**, making it dramatically richer. The architecture:
+- Field state \(\mathbf{h} \in \mathbb{R}^{C \times H \times W}\) evolves via Amari's neural field equations [arxiv](https://arxiv.org/html/2602.18690v1)
+- Motor commands \(\mathbf{a}(t)\) (joint torques from MuJoCo) multiplicatively gate the first \(M\) channels
+- Visual prediction: \(\hat{\mathbf{I}}_t = W_\text{out} * \mathbf{h}_t\)
+- Loss: pixel-wise prediction error \(\mathcal{L}_\text{pred} = \|\hat{\mathbf{I}}_t - \mathbf{I}_t\|^2\)
 
----
+**Your extension over the paper:** they used a 2D toy world. You use a 17-DOF articulated body in 3D physics — this is the novel contribution.
 
-## Part 2 Summary
+**Component 2 — Joint-Conditioned NeRF** *(the geometry, your existing code)*
 
-Part 2 trains a NeRF on posed multi-view images from `lego_200x200.npz`, then renders RGB and depth novel-view trajectories.
+A dynamic NeRF conditioned on the joint state vector, using your existing coarse-to-fine NeRF pipeline from your resume: [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/81173328/91208cc3-3781-4c5f-a660-82e310097ee6/Research-Resume-Mohak-Sharma.pdf)
+- Input: \((\mathbf{x}, \mathbf{d}, \theta(t))\) — 3D point, view direction, 17-dim joint angles
+- Output: \((c, \sigma)\) — color + density, now pose-dependent
+- Training data: render MuJoCo humanoid across ~800 random poses from 8 camera angles = 6,400 images, fully automated
 
-### Part 2 pipeline
+**Component 3 — Hamiltonian Physics Loss** *(the physics inductive bias)*
 
-1. Load training, validation, and test camera poses from `lego_200x200.npz`.
-2. Build camera intrinsics from the focal length.
-3. Convert pixels to rays using the camera intrinsics and camera-to-world matrices.
-4. Flatten all training rays into a ray dataset for random batch sampling.
-5. Use a NeRF MLP with positional encoding for 3D points and view directions.
-6. Sample coarse points along rays between near and far bounds.
-7. Volume render coarse RGB and depth outputs.
-8. Use hierarchical importance sampling to draw fine samples from the coarse PDF.
-9. Volume render fine outputs.
-10. Train with coarse + fine RGB reconstruction loss.
-11. Evaluate periodically on a full validation image.
-12. Save validation progress renders, PSNR curves, best checkpoint, metrics JSON, and test trajectory outputs.
-13. Export separate RGB and depth outputs as `.npy`, `.png`, and `.gif`.
-14. Visualize scene setup with Viser screenshots.
+This is what separates you from every existing dynamic NeRF. PhyRecon (NeurIPS 2024) used particle-based differentiable physics for static scenes. You apply the Hamiltonian constraint to an *articulated body in motion*: [proceedings.neurips](https://proceedings.neurips.cc/paper_files/paper/2024/hash/2d880acd7b31e25d45097455c8e8257f-Abstract-Conference.html)
 
-### Part 2 training settings used
+The total mechanical energy of the humanoid must be conserved between frames:
 
-From `images/output/part2_3d_reconstruction/report_metrics.json`:
+\[\mathcal{L}_\text{Hamiltonian} = \left\| \frac{d\mathcal{H}(\theta, \dot\theta)}{dt} \right\|^2\]
 
-- Steps: `5000`
-- Batch rays: `2048`
-- Coarse samples: `32`
-- Fine samples: `32`
-- Best validation PSNR: `23.95 dB`
-- Best step: `4000`
-- Final loss: `0.00514`
-- Near / far: `2.016 / 6.047`
-- Average seconds per step: `0.252`
+where \(\mathcal{H} = T(\dot\theta) + V(\theta)\) is the kinetic + potential energy computed from NeRF's predicted geometry (via depth map → mass distribution). If the NeRF hallucinates a limb in the wrong position, the energy computed from its geometry won't match MuJoCo's ground truth energy — the loss penalizes this. [ritog.github](https://ritog.github.io/posts/hamiltonian_nn/)
 
-### Part 2 outputs
+The full training loss:
+\[\mathcal{L} = \mathcal{L}_\text{render} + \lambda_1 \mathcal{L}_\text{Hamiltonian} + \lambda_2 \mathcal{L}_\text{pred}\]
 
-Saved in `images/output/part2_3d_reconstruction/`:
+***
 
-- `loss_curve.png`
-- `psnr_curve.png`
-- `report_metrics.json`
-- `checkpoint_best.pt`
-- `test_rgb.gif`
-- `test_depth.gif`
-- `progress_renders/`
-- `test_rgb_npy/`
-- `test_rgb_png/`
-- `test_depth_npy/`
-- `test_depth_png/`
-- `viser/`
+## Why No CLARISNet Code Needed
 
----
+| CLARISNet Piece | What It Does | Your Substitute |
+|---|---|---|
+| EEGNet decoder | Produces \(\theta(t)\) (joint angles) | MuJoCo scripted policy / random walk — same format |
+| PPO/SAC RL | Smooths actions | Not needed — MuJoCo physics handles stability |
+| Phase 1 integration | End-to-end latency | You evaluate visual quality metrics, not latency |
+| Consumer EEG headset | Input modality | Irrelevant to CV project |
 
-## How To Run
+The **CLARISNet connection is conceptual and architectural** — you frame this as "the visual perception module that will plug into CLARISNet Layer 6/8," but you validate it independently using MuJoCo-generated ground truth. This is exactly how modular research works.
 
-### Part 1
+***
 
-1. Open `main_part1.ipynb`.
-2. Run the notebook cells in order.
-3. Saved outputs will appear in `images/output/part1_neural_field/`.
+## Revised 4-Week Plan (No CLARISNet Dependency)
 
-### Part 2
+### Week 1 — Data Generation + Baseline NeRF
+- Set up MuJoCo `dm_control` humanoid, script 3 motion types: walking, arm raise, crouch
+- Render 6,400 frames (800 poses × 8 cameras) with joint state logs → your training dataset
+- Implement joint-conditioned NeRF (add pose MLP on top of your existing code)
+- Baseline: train vanilla NeRF on static pose → establish PSNR/SSIM floor
 
-1. Open `main_part2.ipynb`.
-2. Run training cells first.
-3. Run the RGB render cell if you want RGB outputs.
-4. Run the depth render cell if you want depth outputs.
-5. Saved outputs will appear in `images/output/part2_3d_reconstruction/`.
+### Week 2 — Hamiltonian Physics Loss
+- Implement HNN energy computation from NeRF depth map → mass proxy [github](https://github.com/DecodEPFL/HamiltonianNet)
+- Add \(\mathcal{L}_\text{Hamiltonian}\) to NeRF training loop
+- Ablation: NeRF alone vs. NeRF + Hamiltonian loss on novel-view synthesis quality
+- Key experiment: does physics loss improve reconstruction of *occluded limbs*? (the hard case)
 
----
+### Week 3 — Motor-Gated Neural Field World Model
+- Re-implement the Feb 2026 arXiv architecture  on MuJoCo video [arxiv](https://arxiv.org/html/2602.18690v1)
+- Motor-gated channels: joint torques \(\tau(t)\) as multiplicative modulator
+- Train on visuomotor prediction, visualize channel selectivity → does body-selective encoding emerge?
+- Connect to NeRF: use neural field's predicted frame as NeRF's training signal for unseen poses
 
-## Reports
+### Week 4 — Evaluation + Report
+**Quantitative metrics:**
+- Novel-view synthesis: PSNR / SSIM / LPIPS — PhysNeRF-BS vs. vanilla NeRF vs. pose-conditioned NeRF (no Hamiltonian)
+- Physical stability: drop reconstructed mesh into Isaac Gym, measure instability frames (PhyRecon's exact metric — you beat their 40% improvement baseline ) [arxiv](https://arxiv.org/html/2404.16666v1)
+- Body-selective encoding: measure channel tuning selectivity (what % of motor-gated channels develop body vs. background preference)
 
-HTML reports included in the repo:
+**Report structure:** Introduction → Related Work (Neural Fields, PINNs, Body Schema, BCI) → Method → Experiments → Ablations → CLARISNet Integration Discussion
 
-- `part1_results_report.html`
-- `part2_results_report.html`
-- `combined_results_report.html`
+***
 
-These summarize the saved visual outputs and metrics for both parts.
+## The Novelty Statement (for your report abstract)
 
----
+> *We present PhysNeRF-BS, a physics-informed neural radiance field that acquires a body schema — an implicit model of the agent's own body — through visuomotor prediction alone. A joint-conditioned NeRF reconstructs articulated body appearance across poses, regularized by a Hamiltonian energy conservation loss that enforces rigid-body physical plausibility. A motor-gated neural field, trained to predict visual consequences of motor commands, spontaneously develops body-selective encoding. Together these components constitute a biologically grounded visual perception front-end for neural-driven avatar systems, designed to plug into the CLARISNet BCI pipeline as its visual cortex.*
 
-## Environment Setup
+***
 
-### Prerequisites
-
-- Python 3.10+
-- `pip`
-- Jupyter or VS Code notebook support
-
-### Recommended packages
-
-- `numpy`
-- `matplotlib`
-- `pillow`
-- `torch`
-- `torchvision`
-- `tqdm`
-- `ipykernel`
-- `imageio`
-- `viser` for the 3D visualization workflow
-
-### Installation
-
-Windows PowerShell:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install numpy matplotlib pillow torch torchvision tqdm ipykernel imageio viser
-```
-
-macOS / Linux:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install numpy matplotlib pillow torch torchvision tqdm ipykernel imageio viser
-```
-
----
-
-## Notes
-
-- Part 1 is a 2D neural field reconstruction task.
-- Part 2 is a full 3D NeRF reconstruction task with hierarchical sampling.
-- Part 2 training is the heavier stage and benefits a lot from running on GPU.
-- The saved HTML reports are the easiest way to review final outputs quickly.
+**Ready to start?** The fastest Day 1 action is: `pip install dm_control mujoco torch torchvision` and render your first 100 humanoid poses. Want me to generate the complete data generation script right now?

@@ -1,0 +1,9 @@
+{
+  "num_frames": 30,
+  "num_sequences": 3,
+  "splits": {
+    "train": 20,
+    "val": 10,
+    "test": 0
+  }
+}

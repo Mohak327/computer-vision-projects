@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "physnerf-bs"
+version = "0.1.0"
+description = "Physics-informed NeRF body-schema research prototype."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "Pillow>=10.0",
+  "PyYAML>=6.0",
+  "torch>=2.2",
+]
+
+[project.optional-dependencies]
+sim = [
+  "dm_control>=1.0",
+  "mujoco>=3.1",
+]
+metrics = [
+  "lpips>=0.1.4",
+]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.scripts]
+generate_dataset = "physnerf_bs.cli:generate_dataset_main"
+train_nerf = "physnerf_bs.cli:train_nerf_main"
+train_world_model = "physnerf_bs.cli:train_world_model_main"
+evaluate_nerf = "physnerf_bs.cli:evaluate_nerf_main"
+evaluate_world_model = "physnerf_bs.cli:evaluate_world_model_main"
+run_ablation_suite = "physnerf_bs.cli:run_ablation_suite_main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
