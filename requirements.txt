@@ -1,6 +1,0 @@
-# Full project install:
-# - core package
-# - dev tools
-# - MuJoCo / dm_control simulation deps
-# - perceptual metrics deps
--e .[dev,sim,metrics]
