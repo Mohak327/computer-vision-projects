@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project 5A Results Gallery</title>
+    <style>
+      :root {
+        --panel-border: rgba(255, 255, 255, 0.08);
+        --text: #edf2ff;
+        --muted: #aeb9d6;
+        --accent: #7dd3fc;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+        --max: 1240px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(125, 211, 252, 0.22),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(245, 158, 11, 0.17),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom center,
+            rgba(52, 211, 153, 0.12),
+            transparent 38%
+          ),
+          linear-gradient(180deg, #070b16 0%, #0c1224 45%, #0a0f1d 100%);
+        font-family: "Segoe UI", "Trebuchet MS", "Aptos", sans-serif;
+        line-height: 1.55;
+      }
+
+      .page {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 24px 18px 48px;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 12px;
+        z-index: 20;
+        background: rgba(8, 12, 24, 0.68);
+        border: 1px solid var(--panel-border);
+        border-radius: 999px;
+        padding: 10px 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        backdrop-filter: blur(12px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand-mark {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), #f59e0b);
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 0.95rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.86rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+      }
+
+      .nav a:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .section {
+        margin-top: 22px;
+        padding: 20px;
+        border-radius: 22px;
+        background: rgba(14, 20, 39, 0.78);
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+      }
+
+      .section h3 {
+        margin: 0 0 6px;
+        font-size: 1.4rem;
+      }
+
+      .section p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .gallery {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      #samplingLoopsGallery {
+        gap: 20px;
+      }
+
+      #samplingLoopsGallery .card-grid {
+        gap: 18px;
+      }
+
+      #samplingLoopsGallery .figure-card {
+        padding: 12px;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .figure-card {
+        padding: 10px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        cursor: pointer;
+      }
+
+      .figure-card h4 {
+        margin: 10px 0 4px;
+        font-size: 1rem;
+      }
+
+      .figure-card p {
+        margin: 0;
+        margin-bottom: 12px;
+        font-size: 0.92rem;
+      }
+
+      .image-only-label {
+        margin: 2px 0 14px;
+        color: #d8dde8;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        line-height: 1.2;
+      }
+
+      .figure-media {
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f4f7fb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80px;
+        padding: 8px;
+      }
+
+      .figure-media img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+
+      .figure-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: rgba(9, 13, 24, 0.82);
+        color: #fff;
+        font-size: 0.72rem;
+      }
+
+      .figure-media-wrap {
+        position: relative;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(3, 6, 14, 0.84);
+        z-index: 100;
+      }
+
+      .modal.open {
+        display: flex;
+      }
+
+      .modal-panel {
+        width: min(1100px, 100%);
+        max-height: 92vh;
+        overflow: auto;
+        border-radius: 20px;
+        background: #0d1428;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 14px;
+      }
+
+      .modal-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .modal-top h3 {
+        margin: 0 0 4px;
+      }
+      .modal-top p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .close-btn {
+        border: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+
+      .modal-img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 76vh;
+        margin: 0 auto;
+        display: block;
+        border-radius: 14px;
+        background: #f7f9fc;
+      }
+
+      @media (max-width: 920px) {
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <h1>Project 5A Results Gallery</h1>
+        </div>
+        <nav class="nav" aria-label="Section navigation">
+          <a href="#sampling-loops">Sampling Loops</a>
+          <a href="#guided-sampling">Prompt-Guided</a>
+          <a href="#local-edits">Local Edits</a>
+          <a href="#compositions">Compositions</a>
+          <a href="#bells-whistles">Bells &amp; Whistles</a>
+        </nav>
+      </header>
+
+      <section class="section" id="sampling-loops">
+        <h3>Part 0: Setup</h3>
+        <p>
+          Prompts used in Cell 16: "a high quality photo", "an oil painting of
+          an old man", and "a lithograph of waterfalls". Stage 1 is sampled at
+          20 steps (64x64), Stage 2 is sampled at 20 steps (256x256 upsampled),
+          and the first prompt is compared at 5 steps vs 50 steps.
+        </p>
+        <div class="gallery" id="setupGallery"></div>
+      </section>
+
+      <section class="section" id="sampling-loops">
+        <h3>Part 1: Sampling Loops</h3>
+        <p>
+          Prompts used in Cell 16: "a high quality photo", "an oil painting of
+          an old man", and "a lithograph of waterfalls". Stage 1 is sampled at
+          20 steps (64x64), Stage 2 is sampled at 20 steps (256x256 upsampled),
+          and the first prompt is compared at 5 steps vs 50 steps.
+        </p>
+        <div class="gallery" id="samplingLoopsGallery"></div>
+      </section>
+
+      <section class="section" id="guided-sampling">
+        <h3>Part 1: Prompt-Guided Sampling</h3>
+        <p>Prompt-driven diffusion outputs and CFG examples.</p>
+        <div class="gallery" id="guidedSamplingGallery"></div>
+      </section>
+
+      <section class="section" id="local-edits">
+        <h3>Part 1: Local Edits</h3>
+        <p>
+          Hand-drawn and web-image edits, inpainting, and text-conditioned
+          translation.
+        </p>
+        <div class="gallery" id="localEditsGallery"></div>
+      </section>
+
+      <section class="section" id="compositions">
+        <h3>Part 1: Visual Compositions</h3>
+        <p>Visual anagrams and hybrid image compositions.</p>
+        <div class="gallery" id="compositionsGallery"></div>
+      </section>
+
+      <section class="section" id="bells-whistles">
+        <h3>Part 2: Bells &amp; Whistles</h3>
+        <p>Optional extras and upsampling examples.</p>
+        <div class="gallery" id="bellsWhistlesGallery"></div>
+      </section>
+    </div>
+
+    <div class="modal" id="imageModal" aria-hidden="true">
+      <div
+        class="modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal-top">
+          <div>
+            <h3 id="modalTitle">Figure title</h3>
+            <p id="modalCaption">Figure caption</p>
+          </div>
+          <button class="close-btn" id="modalClose" aria-label="Close figure">
+            &times;
+          </button>
+        </div>
+        <img class="modal-img" id="modalImage" alt="Expanded figure" />
+      </div>
+    </div>
+
+    <script>
+      const figureSections = {
+        setupGallery: [
+          {
+            type: "grid",
+            cols: 3,
+            cards: [
+              {
+                src: "outputs/cell_cells_16_outputs_3_data_text_html_3_1_40614cd2d7.png",
+                alt: "Stage 1 - a high quality photo",
+                title: "Stage 1 - a high quality photo",
+                caption: "Stage 1 output (64x64) with 20 inference steps.",
+                topLabel: "Stage 1 (20 Steps): A High Quality Photo",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_16_outputs_3_data_text_html_5_1_46dec511df.png",
+                alt: "Stage 1 - an oil painting of an old man",
+                title: "Stage 1 - an oil painting of an old man",
+                caption: "Stage 1 output (64x64) with 20 inference steps.",
+                topLabel: "Stage 1 (20 Steps): An Oil Painting of an Old Man",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_16_outputs_3_data_text_html_7_1_ea1ccf88b2.png",
+                alt: "Stage 1 - a lithograph of waterfalls",
+                title: "Stage 1 - a lithograph of waterfalls",
+                caption: "Stage 1 output (64x64) with 20 inference steps.",
+                topLabel: "Stage 1 (20 Steps): A Lithograph of Waterfalls",
+                imageOnly: true,
+              },
+            ],
+          },
+          {
+            type: "grid",
+            cols: 3,
+            cards: [
+              {
+                src: "outputs/cell_cells_16_outputs_4_data_text_html_3_1_9dbdef1656.png",
+                alt: "Stage 2 - a high quality photo",
+                title: "Stage 2 - a high quality photo",
+                caption:
+                  "Stage 2 output (256x256), upsampled from Stage 1 using 20 inference steps.",
+                topLabel: "Stage 2 (20 Steps): A High Quality Photo",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_16_outputs_4_data_text_html_5_1_d9bef00779.png",
+                alt: "Stage 2 - an oil painting of an old man",
+                title: "Stage 2 - an oil painting of an old man",
+                caption:
+                  "Stage 2 output (256x256), upsampled from Stage 1 using 20 inference steps.",
+                topLabel: "Stage 2 (20 Steps): An Oil Painting of an Old Man",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_16_outputs_4_data_text_html_7_1_6159941645.png",
+                alt: "Stage 2 - a lithograph of waterfalls",
+                title: "Stage 2 - a lithograph of waterfalls",
+                caption:
+                  "Stage 2 output (256x256), upsampled from Stage 1 using 20 inference steps.",
+                topLabel: "Stage 2 (20 Steps): A Lithograph of Waterfalls",
+                imageOnly: true,
+              },
+            ],
+          },
+          {
+            type: "grid",
+            cols: 2,
+            cards: [
+              {
+                src: "outputs/cell_cells_16_outputs_6_data_text_html_3_1_929d696f24.png",
+                alt: "a high quality photo - 5 steps",
+                title: "a high quality photo - 5 steps",
+                caption:
+                  "Stage 1 output for the first prompt with 5 inference steps.",
+                topLabel: "Step Comparison: A High Quality Photo - 5 Steps",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_16_outputs_8_data_text_html_3_1_330c009605.png",
+                alt: "a high quality photo - 50 steps",
+                title: "a high quality photo - 50 steps",
+                caption:
+                  "Stage 1 output for the first prompt with 50 inference steps.",
+                topLabel: "Step Comparison: A High Quality Photo - 50 Steps",
+                imageOnly: true,
+              },
+            ],
+          },
+        ],
+        samplingLoopsGallery: [
+          {
+            type: "wide",
+            badge: "Scheduler snapshot",
+            src: "outputs/cell_cells_17_source_9_1_66c3081437.png",
+            alt: "Scheduler snapshot",
+            title: "Scheduler Snapshot",
+            caption:
+              "The scheduler configuration used for the baseline sampling loop.",
+            description:
+              "This is the setup that controls the diffusion timesteps for the first sampling experiments.",
+          },
+          {
+            type: "grid",
+            cols: 4,
+            cards: [
+              {
+                src: "outputs/cell_cells_20_outputs_2_data_text_html_1_1_652ad12aa5.png",
+                alt: "Campanile original",
+                title: "Campanile Original",
+                caption:
+                  "The original Campanile image used as the clean input.",
+                topLabel: "Original Image",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_23_outputs_1_data_text_html_3_1_8b541127cf.png",
+                alt: "Campanile noisy t=250",
+                title: "Campanile Noisy t=250",
+                caption: "Noisy image at t=250.",
+                topLabel: "Noisy t=250",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_23_outputs_2_data_text_html_3_1_8c95afd146.png",
+                alt: "Campanile noisy t=500",
+                title: "Campanile Noisy t=500",
+                caption: "Noisy image at t=500.",
+                topLabel: "Noisy t=500",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_23_outputs_3_data_text_html_3_1_1cfc9913ae.png",
+                alt: "Campanile noisy t=750",
+                title: "Campanile Noisy t=750",
+                caption: "Noisy image at t=750.",
+                topLabel: "Noisy t=750",
+                imageOnly: true,
+              },
+            ],
+            // cards: [
+            //   { badge: "1.1 Forward process", src: "outputs/cell_cells_20_outputs_2_data_text_html_1_1_652ad12aa5.png", alt: "Forward Process", title: "Forward Process", caption: "Adding noise progressively to the clean digit.", description: "The clean digit is easy to read at low sigma, but the structure starts to dissolve quickly once noise rises above the training regime." },
+            //   { badge: "1.2 Classical denoising", src: "outputs/cell_cells_23_outputs_2_data_text_html_3_1_8c95afd146.png", alt: "Classical Denoising", title: "Classical Denoising", caption: "Traditional denoising at multiple noise levels.", description: "The model remains strongest near sigma = 0.5, but the reconstruction quality drops when the corrupted input strays too far from the training distribution." },
+            //   { badge: "1.3 One-step denoising", src: "outputs/cell_cells_25_outputs_1_data_text_html_3_1_ee8c385c30.png", alt: "One-Step Denoising", title: "One-Step Denoising", caption: "One-step passes from noisy input back to a digit.", description: "When the input contains no digit structure at all, the network hallucinates digit-like blobs. That is useful evidence that it learned a strong prior, but it is not yet a true generative sampler." },
+            //   { badge: "1.4 Iterative denoising", src: "outputs/cell_cells_29_source_1_1_068e4ec79e.png", alt: "Iterative Denoising", title: "Iterative Denoising", caption: "Iterative denoising trajectory and intermediate samples.", description: "The model learns the broad denoising mapping almost immediately, then spends the rest of training tightening the details." }
+            // ]
+          },
+          {
+            type: "grid",
+            cols: 3,
+            cards: [
+              {
+                src: "outputs/cell_cells_25_outputs_1_data_text_html_5_1_d862aeaeef.png",
+                alt: "Campanile gaussian t=250",
+                title: "Gaussian t = 250",
+                caption:
+                  "Cell 23: Gaussian denoising applied to the t = 250 noisy image.",
+                topLabel: "Gaussian denoising at t = 250",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_25_outputs_2_data_text_html_5_1_3ffa4dd8d7.png",
+                alt: "Campanile gaussian t=500",
+                title: "Gaussian t = 500",
+                caption:
+                  "Cell 23: Gaussian denoising applied to the t = 500 noisy image.",
+                topLabel: "Gaussian denoising at t = 500",
+                imageOnly: true,
+              },
+              {
+                src: "outputs/cell_cells_25_outputs_3_data_text_html_5_1_fb70a86629.png",
+                alt: "Campanile gaussian t=750",
+                title: "Gaussian t = 750",
+                caption:
+                  "Cell 23: Gaussian denoising applied to the t = 750 noisy image.",
+                topLabel: "Gaussian denoising at t = 750",
+                imageOnly: true,
+              },
+            ],
+          },
+        ],
+        guidedSamplingGallery: [
+          {
+            type: "wide",
+            badge: "1.5 Sampling",
+            src: "outputs/cell_cells_33_outputs_1_data_text_html_5_1_fed7447a75.png",
+            alt: "Diffusion model sampling",
+            title: "Diffusion Model Sampling",
+            caption:
+              "Pure generation using the sampling loop and text prompts.",
+          },
+          {
+            type: "grid",
+            cols: 2,
+            cards: [
+              {
+                badge: "1.6 CFG",
+                src: "outputs/cell_cells_35_outputs_1_data_text_html_3_1_7587dbc28b.png",
+                alt: "Classifier-Free Guidance",
+                title: "Classifier-Free Guidance",
+                caption: "Guided samples improve class consistency.",
+                description:
+                  "The conditioning signal gives the sampler a clearer target, and the generated digits become more faithful to the prompt.",
+              },
+              {
+                badge: "1.7 I2I",
+                src: "outputs/cell_cells_37_outputs_1_data_text_html_3_1_065d97f979.png",
+                alt: "Image-to-Image Translation",
+                title: "Image-to-Image Translation",
+                caption: "Prompt-guided edits on an input image.",
+                description:
+                  "Prompt guidance lets the model preserve some structure from the source while pulling the output toward the requested style.",
+              },
+            ],
+          },
+        ],
+        localEditsGallery: [
+          {
+            type: "grid",
+            cols: 3,
+            cards: [
+              {
+                badge: "1.7.1 Web prep",
+                src: "outputs/cell_cells_39_outputs_2_data_text_html_3_1_1aea7aa190.png",
+                alt: "Editing hand-drawn and web images",
+                title: "Editing Hand-Drawn and Web Images",
+                caption:
+                  "The hand-drawn and web-image edit pipeline on the same canvas.",
+                description:
+                  "This part pushes the model into practical image editing workflows.",
+              },
+              {
+                badge: "1.7.1 Web image",
+                src: "outputs/cell_cells_42_outputs_2_data_text_html_1_1_a68e311cc8.png",
+                alt: "Web image edit",
+                title: "Web Image Edit",
+                caption:
+                  "A web landmark pushed through the diffusion edit path.",
+                description:
+                  "The model keeps the broad layout while shifting the appearance toward the prompt.",
+              },
+              {
+                badge: "1.7.1 Hand-drawn",
+                src: "outputs/cell_cells_43_outputs_2_data_text_html_3_1_6071a4fe83.png",
+                alt: "Hand-drawn edit",
+                title: "Hand-Drawn Edit",
+                caption: "A sketch transformed into a prompt-matched image.",
+                description:
+                  "The conditioning signal gives the sampler a clearer target, and the generated image becomes more faithful to the prompt.",
+              },
+            ],
+          },
+          {
+            type: "grid",
+            cols: 2,
+            cards: [
+              {
+                badge: "1.7.2 Inpainting",
+                src: "outputs/cell_cells_45_outputs_2_data_text_html_3_1_a50a89d35b.png",
+                alt: "Inpainting",
+                title: "Inpainting",
+                caption: "Masked edits that respect the visible context.",
+                description:
+                  "The model fills missing areas while keeping the surrounding image structure coherent.",
+              },
+              {
+                badge: "1.7.3 Text-conditioned",
+                src: "outputs/cell_cells_48_outputs_1_data_text_html_3_1_9ec05d2b57.png",
+                alt: "Text-conditioned image-to-image translation",
+                title: "Text-Conditioned Translation",
+                caption: "Editing a source image into a prompt-driven target.",
+                description:
+                  "This is the cleanest example of the model doing controlled image-to-image translation instead of pure sampling.",
+              },
+            ],
+          },
+        ],
+        compositionsGallery: [
+          {
+            type: "grid",
+            cols: 2,
+            cards: [
+              {
+                badge: "1.8 Visual anagrams",
+                src: "outputs/cell_cells_50_outputs_6_data_text_html_3_1_eaf7d45071.png",
+                alt: "Visual Anagrams",
+                title: "Visual Anagrams",
+                caption: "One latent, two views, two prompts.",
+                description:
+                  "The creative compositions show that the model can support structured prompt conflicts.",
+              },
+              {
+                badge: "1.9 Hybrid images",
+                src: "outputs/cell_cells_52_outputs_1_data_text_html_3_1_2833cfe502.png",
+                alt: "Hybrid Images",
+                title: "Hybrid Images",
+                caption:
+                  "Low-frequency content from one prompt and high-frequency content from another.",
+                description:
+                  "The same underlying latent can support multiple readings when the sampling rule is changed carefully.",
+              },
+            ],
+          },
+        ],
+        bellsWhistlesGallery: [
+          {
+            type: "grid",
+            cols: 2,
+            cards: [
+              {
+                badge: "Optional",
+                src: "outputs/cell_cells_57_outputs_2_data_text_html_3_1_d6390400dd.png",
+                alt: "Bells and whistles edits",
+                title: "Optional Edits",
+                caption: "Extra visual anagrams and alternate edits.",
+                description:
+                  "These optional examples explore more than the base assignment asked for.",
+              },
+              {
+                badge: "Upsampling",
+                src: "outputs/cell_cells_58_outputs_7_data_text_html_15_1_a7f6da24b6.png",
+                alt: "Upsampling",
+                title: "Upsampling Example",
+                caption:
+                  "The stage-two upsampling path applied to a generated image.",
+                description:
+                  "This closes out the notebook with a higher-resolution example of the generated output.",
+              },
+            ],
+          },
+        ],
+      };
+
+      const modal = document.getElementById("imageModal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalCaption = document.getElementById("modalCaption");
+      const modalImage = document.getElementById("modalImage");
+      const modalClose = document.getElementById("modalClose");
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => {
+          const chars = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          };
+          return chars[char];
+        });
+      }
+
+      function renderCard(card, wide = false) {
+        const imageOnly = Boolean(card.imageOnly);
+        const description = card.description
+          ? `<p>${escapeHtml(card.description)}</p>`
+          : "";
+        const badge = card.badge
+          ? `<span class="figure-badge">${escapeHtml(card.badge)}</span>`
+          : "";
+        const topLabel = card.topLabel
+          ? `<p class="image-only-label">${escapeHtml(card.topLabel)}</p>`
+          : "";
+        const body = imageOnly
+          ? `${topLabel}`
+          : `<h4>${escapeHtml(card.title)}</h4>${description}`;
+
+        return `
+          <article class="figure-card${wide ? " wide" : ""}" data-title="${escapeHtml(card.title)}" data-caption="${escapeHtml(card.caption || "")}" data-src="${escapeHtml(card.src)}">
+            ${topLabel}
+            <div class="figure-media-wrap">
+              <div class="figure-media">
+                ${badge}
+                <img src="${escapeHtml(card.src)}" alt="${escapeHtml(card.alt || card.title)}" />
+              </div>
+            </div>
+            ${imageOnly ? "" : body}
+          </article>
+        `;
+      }
+
+      function renderGallery(galleryId, blocks) {
+        const gallery = document.getElementById(galleryId);
+        if (!gallery) return;
+
+        const html = blocks
+          .map((block) => {
+            if (block.type === "grid") {
+              const cards = block.cards
+                .map((card) => renderCard(card))
+                .join("");
+              return `<div class="card-grid" style="--cols: ${block.cols || 2};">${cards}</div>`;
+            }
+            return renderCard(block, true);
+          })
+          .join("");
+
+        gallery.innerHTML = html;
+      }
+
+      Object.entries(figureSections).forEach(([galleryId, blocks]) => {
+        renderGallery(galleryId, blocks);
+      });
+
+      function openModal(card) {
+        const title = card.getAttribute("data-title") || "";
+        const caption = card.getAttribute("data-caption") || "";
+        const src =
+          card.getAttribute("data-src") ||
+          card.querySelector("img")?.getAttribute("src") ||
+          "";
+
+        modalTitle.textContent = title;
+        modalCaption.textContent = caption;
+        modalImage.src = src;
+        modalImage.alt = title;
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        modalImage.src = "";
+      }
+
+      document.querySelectorAll(".figure-card").forEach((card) => {
+        card.addEventListener("click", () => openModal(card));
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openModal(card);
+          }
+        });
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", "Open figure");
+      });
+
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) closeModal();
+      });
+
+      modalClose.addEventListener("click", closeModal);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.classList.contains("open"))
+          closeModal();
+      });
+    </script>
+  </body>
+</html>
