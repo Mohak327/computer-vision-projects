@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project 5 Demo</title>
+    <style>
+      :root {
+        --bg: #08111f;
+        --panel: rgba(13, 20, 36, 0.84);
+        --panel-border: rgba(255, 255, 255, 0.1);
+        --text: #edf2ff;
+        --muted: #aeb9d6;
+        --accent: #7dd3fc;
+        --accent-2: #f59e0b;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        --max: 1360px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(125, 211, 252, 0.2),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(245, 158, 11, 0.14),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #06101d 0%, #091427 42%, #08111f 100%);
+        font-family: "Segoe UI", "Trebuchet MS", "Aptos", sans-serif;
+        line-height: 1.55;
+      }
+
+      .page {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 24px 18px 56px;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 14px;
+        z-index: 20;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 16px;
+        border-radius: 999px;
+        background: rgba(8, 12, 24, 0.74);
+        border: 1px solid var(--panel-border);
+        backdrop-filter: blur(14px);
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.92rem;
+        padding: 7px 11px;
+        border-radius: 999px;
+      }
+
+      .nav a:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .hero {
+        margin-top: 22px;
+        padding: 30px;
+        border-radius: 30px;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(17, 25, 48, 0.95),
+            rgba(10, 16, 31, 0.9)
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(125, 211, 252, 0.16),
+            transparent 28%
+          );
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.45fr 0.9fr;
+        gap: 26px;
+        align-items: start;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+      }
+
+      .hero h2 {
+        margin: 0 0 14px;
+        font-size: clamp(2.2rem, 4vw, 4.3rem);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+        max-width: 11ch;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 70ch;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #dce8ff;
+        font-size: 0.88rem;
+      }
+
+      .summary-card {
+        padding: 22px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .summary-card h3 {
+        margin: 0 0 14px;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .summary-card p {
+        margin: 0 0 12px;
+        color: var(--muted);
+      }
+
+      .summary-card p:last-child {
+        margin-bottom: 0;
+      }
+
+      .demo-section {
+        margin-top: 28px;
+        border-radius: 28px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .accordion {
+        background: transparent;
+      }
+
+      .accordion-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 16px;
+        flex-wrap: wrap;
+        list-style: none;
+        cursor: pointer;
+        padding: 24px;
+      }
+
+      .accordion-summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .accordion-summary::marker {
+        display: none;
+      }
+
+      .accordion-summary h3 {
+        margin: 0 0 6px;
+        font-size: 1.5rem;
+      }
+
+      .accordion-summary p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 78ch;
+      }
+
+      .accordion-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.74rem;
+        font-weight: 700;
+      }
+
+      .accordion-chevron {
+        flex: 0 0 auto;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 42px;
+        padding: 0 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        font-size: 0.92rem;
+        white-space: nowrap;
+      }
+
+      .accordion-chevron .label-less {
+        display: none;
+      }
+
+      details[open] .accordion-chevron .label-more {
+        display: none;
+      }
+
+      details[open] .accordion-chevron .label-less {
+        display: inline;
+      }
+
+      .accordion-body {
+        padding: 0 24px 24px;
+      }
+
+      .section-links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .section-links a {
+        color: var(--text);
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 0.9rem;
+      }
+
+      .embed-shell {
+        overflow: hidden;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .embed-frame {
+        width: 100%;
+        min-height: 1200px;
+        border: 0;
+        display: block;
+        background: transparent;
+      }
+
+      .footer-note {
+        margin-top: 18px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 960px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          border-radius: 24px;
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .page {
+          padding: 16px 12px 40px;
+        }
+
+        .topbar {
+          position: static;
+          flex-direction: column;
+          align-items: stretch;
+          border-radius: 22px;
+        }
+
+        .hero,
+        .demo-section {
+          padding: 18px;
+          border-radius: 24px;
+        }
+
+        .demo-section {
+          padding: 0;
+        }
+
+        .accordion-summary,
+        .accordion-body {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <h1>Project 5 Combined Demo</h1>
+        </div>
+        <nav class="nav" aria-label="Section navigation">
+          <a href="#overview">Overview</a>
+          <a href="#part-a">Part A</a>
+          <a href="#part-b">Part B</a>
+        </nav>
+      </header>
+
+      <section class="hero" id="overview">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Combined Project 5 Showcase</div>
+            <h2>Both project parts in one place.</h2>
+            <p>
+              This page combines the Part A and Part B result galleries into a
+              single demo page. Each section below embeds the full standalone
+              gallery so the layouts, captions, and click-to-expand behavior
+              stay intact.
+            </p>
+            <div class="chip-row" aria-label="Project summary">
+              <span class="chip">Part A: Diffusion sampling loops</span>
+              <span class="chip">Part B: MNIST denoising + flow matching</span>
+              <span class="chip">Single combined demo page</span>
+            </div>
+          </div>
+          <aside class="summary-card">
+            <h3>Layout</h3>
+            <p>
+              Part A stays focused on pretrained diffusion sampling, image
+              editing, inpainting, visual anagrams, and hybrid images.
+            </p>
+            <p>
+              Part B keeps the MNIST denoising, flow matching, class
+              conditioning, and scheduler-comparison story together.
+            </p>
+            <p>
+              The embedded frames auto-resize to their content so the page
+              reads like one continuous demo.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="demo-section" id="part-a">
+        <details class="accordion">
+          <summary class="accordion-summary">
+            <div>
+              <!-- <div class="accordion-kicker">Accordion</div> -->
+              <h3>Part A</h3>
+              <p>
+                DeepFloyd sampling loops, CFG, image-to-image translation,
+                inpainting, visual anagrams, hybrid images, and optional extras.
+              </p>
+            </div>
+            <div class="accordion-chevron" aria-hidden="true">
+              <span class="label-more">Read More</span>
+              <span class="label-less">Read Less</span>
+            </div>
+          </summary>
+          <div class="accordion-body">
+            <div class="section-links">
+              <a href="part_a/part_a_results.html" target="_blank" rel="noopener"
+                >Open Part A alone</a
+              >
+            </div>
+            <div class="embed-shell">
+              <iframe
+                class="embed-frame"
+                id="partAFrame"
+                src="part_a/part_a_results.html"
+                title="Part A Results"
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="demo-section" id="part-b">
+        <details class="accordion">
+          <summary class="accordion-summary">
+            <div>
+              <!-- <div class="accordion-kicker">Accordion</div> -->
+              <h3>Part B</h3>
+              <p>
+                MNIST denoising UNets, unconditional and class-conditioned flow
+                matching, and learning-rate scheduler comparisons.
+              </p>
+            </div>
+            <div class="accordion-chevron" aria-hidden="true">
+              <span class="label-more">Read More</span>
+              <span class="label-less">Read Less</span>
+            </div>
+          </summary>
+          <div class="accordion-body">
+            <div class="section-links">
+              <a href="part_b/part_b_results.html" target="_blank" rel="noopener"
+                >Open Part B alone</a
+              >
+            </div>
+            <div class="embed-shell">
+              <iframe
+                class="embed-frame"
+                id="partBFrame"
+                src="part_b/part_b_results.html"
+                title="Part B Results"
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <div class="footer-note">
+        Both embedded galleries are loaded from the local project files.
+      </div>
+    </div>
+
+    <script>
+      function disableFrameModal(frame) {
+        try {
+          const doc = frame.contentDocument || frame.contentWindow?.document;
+          if (!doc) return;
+
+          const modal = doc.getElementById("imageModal");
+          if (modal) {
+            modal.remove();
+          }
+
+          doc.querySelectorAll(".figure-card").forEach((card) => {
+            const clone = card.cloneNode(true);
+            clone.style.cursor = "default";
+            clone.removeAttribute("role");
+            clone.removeAttribute("tabindex");
+            clone.removeAttribute("aria-label");
+            card.replaceWith(clone);
+          });
+        } catch (error) {
+          // Ignore cross-document manipulation errors and leave the iframe as-is.
+        }
+      }
+
+      function resizeFrame(frame) {
+        try {
+          const doc = frame.contentDocument || frame.contentWindow?.document;
+          if (!doc) return;
+
+          const page = doc.querySelector(".page");
+          const body = doc.body;
+          const html = doc.documentElement;
+          const height = Math.max(
+            page ? page.scrollHeight : 0,
+            page ? page.offsetHeight : 0,
+            body ? body.scrollHeight : 0,
+            html ? html.scrollHeight : 0
+          );
+
+          if (height) {
+            frame.style.height = `${height + 8}px`;
+          }
+        } catch (error) {
+          frame.style.minHeight = "1400px";
+        }
+      }
+
+      function bindAutoResize(frameId) {
+        const frame = document.getElementById(frameId);
+        if (!frame) return;
+
+        frame.addEventListener("load", () => {
+          disableFrameModal(frame);
+          resizeFrame(frame);
+
+          try {
+            const doc = frame.contentDocument || frame.contentWindow?.document;
+            if (!doc) return;
+            const page = doc.querySelector(".page");
+
+            if (page && "ResizeObserver" in window) {
+              const observer = new ResizeObserver(() => {
+                const nextHeight = page.scrollHeight + 8;
+                const currentHeight = parseFloat(frame.style.height || "0");
+                if (Math.abs(nextHeight - currentHeight) > 1) {
+                  frame.style.height = `${nextHeight}px`;
+                }
+              });
+              observer.observe(page);
+            }
+
+            setTimeout(() => resizeFrame(frame), 150);
+            setTimeout(() => resizeFrame(frame), 600);
+            setTimeout(() => resizeFrame(frame), 1200);
+          } catch (error) {
+            setTimeout(() => resizeFrame(frame), 300);
+          }
+        });
+      }
+
+      bindAutoResize("partAFrame");
+      bindAutoResize("partBFrame");
+
+      window.addEventListener("resize", () => {
+        resizeFrame(document.getElementById("partAFrame"));
+        resizeFrame(document.getElementById("partBFrame"));
+      });
+    </script>
+  </body>
+</html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project 5A Results Gallery</title>
+    <title>Part A Results</title>
     <style>
       :root {
         --bg: #0b1020;
@@ -542,7 +542,7 @@
       <header class="topbar">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true"></div>
-          <h1>Project 5A Results Gallery</h1>
+          <h1>Part A Results</h1>
         </div>
         <nav class="nav" aria-label="Section navigation">
           <a href="#setup">Setup</a>
@@ -557,35 +557,36 @@
       <section class="hero">
         <div class="hero-grid">
           <div>
-            <div class="eyebrow">Notebook-aligned Project 5A gallery</div>
-            <h2>Every saved figure, grouped by the real notebook subparts.</h2>
+            <div class="eyebrow">Project 5A: Diffusion Sampling Loops</div>
+            <h2>From noisy images to guided edits, visual anagrams, and hybrids.</h2>
             <p>
-              This page follows `part_5a.ipynb` directly instead of mixing
-              together representative outputs. The sections below now track the
-              notebook structure from Part 0 through Part 2, including labels
-              like `1.1`, `1.7.2`, `1.8`, and the optional upsampling cell.
+              Part A explores pretrained DeepFloyd diffusion models through
+              forward noising, classical and learned denoising, iterative
+              sampling, classifier-free guidance, image-to-image translation,
+              inpainting, visual anagrams, and hybrid-image generation.
             </p>
             <div class="chip-row" aria-label="Page summary">
               <span class="chip">Part 0 Setup</span>
-              <span class="chip">Part 1.1-1.9</span>
-              <span class="chip">Part 2 Optional</span>
-              <span class="chip">Notebook-derived figures only</span>
+              <span class="chip">Sampling + CFG</span>
+              <span class="chip">Editing + Inpainting</span>
+              <span class="chip">Anagrams + Hybrids</span>
             </div>
           </div>
           <aside class="summary-card">
-            <h3>What changed</h3>
+            <h3>What To Notice</h3>
             <p>
-              The old page had incorrect section names, collapsed several
-              notebook outputs into single cards, and missed many saved images.
+              Early sections compare simple Gaussian denoising against learned
+              denoising and show why iterative reverse diffusion works better
+              than a single denoising step.
             </p>
             <p>
-              The rebuilt version keeps the notebook's own grouping: setup
-              samples, forward/noising experiments, CFG outputs, image-editing
-              sweeps, visual anagrams, hybrid images, and optional extras.
+              CFG improves sample quality, while increasing `i_start` in the
+              translation sections allows larger edits to the original image.
             </p>
             <p>
-              Click any card to inspect it at full size with a more specific
-              caption.
+              The later sections push the same diffusion machinery into more
+              creative tasks: inpainting, prompt-guided edits, visual
+              anagrams, hybrid images, and optional upsampling experiments.
             </p>
           </aside>
         </div>
