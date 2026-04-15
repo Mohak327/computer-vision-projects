@@ -6,17 +6,23 @@
     <title>Project 5A Results Gallery</title>
     <style>
       :root {
+        --bg: #0b1020;
+        --bg-soft: #11172b;
+        --panel: rgba(14, 20, 39, 0.78);
         --panel-border: rgba(255, 255, 255, 0.08);
         --text: #edf2ff;
         --muted: #aeb9d6;
         --accent: #7dd3fc;
+        --accent-2: #f59e0b;
+        --accent-3: #34d399;
         --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-        --max: 1240px;
+        --max: 1280px;
       }
 
       * {
         box-sizing: border-box;
       }
+
       html {
         scroll-behavior: smooth;
       }
@@ -43,60 +49,90 @@
           linear-gradient(180deg, #070b16 0%, #0c1224 45%, #0a0f1d 100%);
         font-family: "Segoe UI", "Trebuchet MS", "Aptos", sans-serif;
         line-height: 1.55;
+        min-height: 100vh;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.12;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.18),
+          rgba(0, 0, 0, 0.8)
+        );
       }
 
       .page {
+        position: relative;
+        z-index: 1;
         max-width: var(--max);
         margin: 0 auto;
-        padding: 24px 18px 48px;
+        padding: 28px 20px 56px;
       }
 
       .topbar {
         position: sticky;
-        top: 12px;
+        top: 14px;
         z-index: 20;
+        backdrop-filter: blur(16px);
         background: rgba(8, 12, 24, 0.68);
         border: 1px solid var(--panel-border);
         border-radius: 999px;
-        padding: 10px 14px;
+        padding: 12px 18px;
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        gap: 12px;
-        backdrop-filter: blur(12px);
+        gap: 16px;
+        box-shadow: var(--shadow);
       }
 
       .brand {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        min-width: 0;
       }
 
       .brand-mark {
-        width: 32px;
-        height: 32px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, var(--accent), #f59e0b);
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        box-shadow: 0 10px 25px rgba(125, 211, 252, 0.2);
+        flex: 0 0 auto;
       }
 
       .brand h1 {
         margin: 0;
-        font-size: 0.95rem;
+        font-size: 0.98rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .nav {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
+        justify-content: flex-end;
       }
 
       .nav a {
         color: var(--muted);
         text-decoration: none;
-        font-size: 0.86rem;
-        padding: 6px 10px;
+        font-size: 0.9rem;
+        padding: 7px 11px;
         border-radius: 999px;
+        transition: all 160ms ease;
       }
 
       .nav a:hover {
@@ -104,87 +140,238 @@
         background: rgba(255, 255, 255, 0.08);
       }
 
-      .section {
-        margin-top: 22px;
-        padding: 20px;
-        border-radius: 22px;
-        background: rgba(14, 20, 39, 0.78);
+      .hero {
+        margin-top: 24px;
+        padding: 34px;
+        border-radius: 32px;
+        background:
+          linear-gradient(
+            145deg,
+            rgba(18, 25, 48, 0.95),
+            rgba(10, 16, 31, 0.92)
+          ),
+          radial-gradient(
+            circle at top right,
+            rgba(125, 211, 252, 0.16),
+            transparent 30%
+          );
         border: 1px solid var(--panel-border);
         box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
       }
 
-      .section h3 {
-        margin: 0 0 6px;
-        font-size: 1.4rem;
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background:
+          radial-gradient(
+            circle at 15% 20%,
+            rgba(125, 211, 252, 0.16),
+            transparent 26%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(245, 158, 11, 0.12),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at 70% 90%,
+            rgba(52, 211, 153, 0.08),
+            transparent 28%
+          );
+        pointer-events: none;
       }
 
-      .section p {
+      .hero-grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.4fr 0.95fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+      }
+
+      .hero h2 {
+        margin: 0 0 14px;
+        font-size: clamp(2.2rem, 4vw, 4.4rem);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+        max-width: 13ch;
+      }
+
+      .hero p {
         margin: 0;
+        color: var(--muted);
+        max-width: 68ch;
+        font-size: 1.03rem;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .chip {
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #d9e6ff;
+        font-size: 0.88rem;
+      }
+
+      .summary-card {
+        border-radius: 24px;
+        padding: 22px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .summary-card h3 {
+        margin: 0 0 14px;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #d9e6ff;
+      }
+
+      .summary-card p {
+        margin: 0 0 14px;
         color: var(--muted);
       }
 
+      .summary-card p:last-child {
+        margin-bottom: 0;
+      }
+
+      .section {
+        margin-top: 28px;
+        padding: 26px;
+        border-radius: 28px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+      }
+
+      .section-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .section-header h3 {
+        margin: 0;
+        font-size: 1.55rem;
+        letter-spacing: -0.02em;
+      }
+
+      .section-header p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 76ch;
+      }
+
       .gallery {
-        margin-top: 16px;
         display: flex;
         flex-direction: column;
-        gap: 14px;
-      }
-
-      #samplingLoopsGallery {
-        gap: 20px;
-      }
-
-      #samplingLoopsGallery .card-grid {
         gap: 18px;
       }
 
-      #samplingLoopsGallery .figure-card {
-        padding: 12px;
+      .subsection {
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .subsection-header {
+        margin-bottom: 14px;
+      }
+
+      .subsection-header h4 {
+        margin: 0 0 6px;
+        font-size: 1.12rem;
+        letter-spacing: -0.01em;
+      }
+
+      .subsection-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+        /* max-width: 74ch; */
+      }
+
+      .subsection-content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
       }
 
       .card-grid {
         display: grid;
         grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
-        gap: 14px;
+        gap: 18px;
       }
 
       .figure-card {
-        padding: 10px;
-        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 22px;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
         cursor: pointer;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background 180ms ease;
+        min-height: 100%;
       }
 
-      .figure-card h4 {
-        margin: 10px 0 4px;
-        font-size: 1rem;
+      .figure-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(125, 211, 252, 0.35);
+        background: rgba(255, 255, 255, 0.06);
       }
 
-      .figure-card p {
-        margin: 0;
-        margin-bottom: 12px;
-        font-size: 0.92rem;
-      }
-
-      .image-only-label {
-        margin: 2px 0 14px;
-        color: #d8dde8;
-        font-size: 0.95rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-        line-height: 1.2;
+      .figure-card.wide {
+        width: 100%;
       }
 
       .figure-media {
-        border-radius: 12px;
+        position: relative;
+        border-radius: 18px;
         overflow: hidden;
         background: #f4f7fb;
+        border: 1px solid rgba(255, 255, 255, 0.12);
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 80px;
-        padding: 8px;
+        padding: 10px;
+        min-height: 120px;
       }
 
       .figure-media img {
@@ -192,23 +379,34 @@
         height: auto;
         max-width: 100%;
         max-height: 100%;
-        object-fit: contain;
         display: block;
+        object-fit: contain;
+        object-position: center;
       }
 
       .figure-badge {
         position: absolute;
-        top: 10px;
-        left: 10px;
-        padding: 5px 9px;
+        top: 12px;
+        left: 12px;
+        padding: 6px 10px;
         border-radius: 999px;
         background: rgba(9, 13, 24, 0.82);
-        color: #fff;
-        font-size: 0.72rem;
+        color: white;
+        font-size: 0.73rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
       }
 
-      .figure-media-wrap {
-        position: relative;
+      .figure-card h5 {
+        margin: 0;
+        font-size: 0.98rem;
+        line-height: 1.3;
+      }
+
+      .figure-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.93rem;
       }
 
       .modal {
@@ -217,8 +415,9 @@
         display: none;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        padding: 24px;
         background: rgba(3, 6, 14, 0.84);
+        backdrop-filter: blur(14px);
         z-index: 100;
       }
 
@@ -227,40 +426,45 @@
       }
 
       .modal-panel {
-        width: min(1100px, 100%);
+        width: min(1200px, 100%);
         max-height: 92vh;
         overflow: auto;
-        border-radius: 20px;
+        border-radius: 28px;
         background: #0d1428;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 14px;
+        box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55);
+        padding: 18px;
       }
 
       .modal-top {
         display: flex;
         justify-content: space-between;
+        gap: 16px;
         align-items: start;
-        gap: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 16px;
       }
 
       .modal-top h3 {
-        margin: 0 0 4px;
+        margin: 0 0 6px;
+        font-size: 1.25rem;
       }
+
       .modal-top p {
         margin: 0;
         color: var(--muted);
       }
 
       .close-btn {
+        appearance: none;
         border: 0;
-        width: 38px;
-        height: 38px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--text);
         cursor: pointer;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 999px;
+        width: 42px;
+        height: 42px;
         font-size: 1.2rem;
+        line-height: 1;
       }
 
       .modal-img {
@@ -268,13 +472,65 @@
         height: auto;
         max-width: 100%;
         max-height: 76vh;
-        margin: 0 auto;
+        object-fit: contain;
+        object-position: center;
         display: block;
-        border-radius: 14px;
+        border-radius: 20px;
         background: #f7f9fc;
       }
 
+      .footer-note {
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        text-align: center;
+      }
+
       @media (max-width: 920px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          border-radius: 24px;
+          align-items: flex-start;
+        }
+
+        .nav {
+          justify-content: flex-start;
+        }
+
+        .hero,
+        .section {
+          padding: 20px;
+          border-radius: 24px;
+        }
+
+        .modal-panel {
+          padding: 14px;
+        }
+
+        .modal-img {
+          max-height: 66vh;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .page {
+          padding: 16px 12px 40px;
+        }
+
+        .topbar {
+          position: static;
+          border-radius: 22px;
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .hero {
+          margin-top: 18px;
+        }
+
         .card-grid {
           grid-template-columns: 1fr;
         }
@@ -289,62 +545,137 @@
           <h1>Project 5A Results Gallery</h1>
         </div>
         <nav class="nav" aria-label="Section navigation">
-          <a href="#sampling-loops">Sampling Loops</a>
-          <a href="#guided-sampling">Prompt-Guided</a>
-          <a href="#local-edits">Local Edits</a>
+          <a href="#setup">Setup</a>
+          <a href="#sampling">Sampling Loops</a>
+          <a href="#generation">Sampling + CFG</a>
+          <a href="#translation">Image Editing</a>
           <a href="#compositions">Compositions</a>
-          <a href="#bells-whistles">Bells &amp; Whistles</a>
+          <a href="#optional">Optional</a>
         </nav>
       </header>
 
-      <section class="section" id="sampling-loops">
-        <h3>Part 0: Setup</h3>
-        <p>
-          Prompts used in Cell 16: "a high quality photo", "an oil painting of
-          an old man", and "a lithograph of waterfalls". Stage 1 is sampled at
-          20 steps (64x64), Stage 2 is sampled at 20 steps (256x256 upsampled),
-          and the first prompt is compared at 5 steps vs 50 steps.
-        </p>
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Notebook-aligned Project 5A gallery</div>
+            <h2>Every saved figure, grouped by the real notebook subparts.</h2>
+            <p>
+              This page follows `part_5a.ipynb` directly instead of mixing
+              together representative outputs. The sections below now track the
+              notebook structure from Part 0 through Part 2, including labels
+              like `1.1`, `1.7.2`, `1.8`, and the optional upsampling cell.
+            </p>
+            <div class="chip-row" aria-label="Page summary">
+              <span class="chip">Part 0 Setup</span>
+              <span class="chip">Part 1.1-1.9</span>
+              <span class="chip">Part 2 Optional</span>
+              <span class="chip">Notebook-derived figures only</span>
+            </div>
+          </div>
+          <aside class="summary-card">
+            <h3>What changed</h3>
+            <p>
+              The old page had incorrect section names, collapsed several
+              notebook outputs into single cards, and missed many saved images.
+            </p>
+            <p>
+              The rebuilt version keeps the notebook's own grouping: setup
+              samples, forward/noising experiments, CFG outputs, image-editing
+              sweeps, visual anagrams, hybrid images, and optional extras.
+            </p>
+            <p>
+              Click any card to inspect it at full size with a more specific
+              caption.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="setup">
+        <div class="section-header">
+          <div>
+            <h3>Part 0: Setup</h3>
+            <p>
+              Initial DeepFloyd samples from Cell 15: Stage 1 outputs, Stage 2
+              upsampling, and the 5-step versus 50-step comparison for the first
+              prompt.
+            </p>
+          </div>
+        </div>
         <div class="gallery" id="setupGallery"></div>
       </section>
 
-      <section class="section" id="sampling-loops">
-        <h3>Part 1: Sampling Loops</h3>
-        <p>
-          Prompts used in Cell 16: "a high quality photo", "an oil painting of
-          an old man", and "a lithograph of waterfalls". Stage 1 is sampled at
-          20 steps (64x64), Stage 2 is sampled at 20 steps (256x256 upsampled),
-          and the first prompt is compared at 5 steps vs 50 steps.
-        </p>
-        <div class="gallery" id="samplingLoopsGallery"></div>
+      <section class="section" id="sampling">
+        <div class="section-header">
+          <div>
+            <h3>Part 1: Sampling Loops</h3>
+            <p>
+              The notebook's denoising core: the diffusion primer figures,
+              forward process, classical denoising baselines, and the iterative
+              denoising comparison.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="samplingGallery"></div>
       </section>
 
-      <section class="section" id="guided-sampling">
-        <h3>Part 1: Prompt-Guided Sampling</h3>
-        <p>Prompt-driven diffusion outputs and CFG examples.</p>
-        <div class="gallery" id="guidedSamplingGallery"></div>
+      <section class="section" id="generation">
+        <div class="section-header">
+          <div>
+            <h3>Part 1.5-1.6: Diffusion Sampling and CFG</h3>
+            <p>
+              Pure generation from noise, followed by classifier-free guidance
+              with the same prompt so the quality jump is easy to compare.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="generationGallery"></div>
       </section>
 
-      <section class="section" id="local-edits">
-        <h3>Part 1: Local Edits</h3>
-        <p>
-          Hand-drawn and web-image edits, inpainting, and text-conditioned
-          translation.
-        </p>
-        <div class="gallery" id="localEditsGallery"></div>
+      <section class="section" id="translation">
+        <div class="section-header">
+          <div>
+            <h3>Part 1.7: Image-to-Image Translation</h3>
+            <p>
+              Unconditional edits, web-image and hand-drawn projections,
+              inpainting, and text-conditioned translations, all grouped by the
+              notebook's actual subsections.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="translationGallery"></div>
       </section>
 
       <section class="section" id="compositions">
-        <h3>Part 1: Visual Compositions</h3>
-        <p>Visual anagrams and hybrid image compositions.</p>
+        <div class="section-header">
+          <div>
+            <h3>Part 1.8-1.9: Visual Compositions</h3>
+            <p>
+              Visual anagrams and hybrid images from the composition part of the
+              notebook.
+            </p>
+          </div>
+        </div>
         <div class="gallery" id="compositionsGallery"></div>
       </section>
 
-      <section class="section" id="bells-whistles">
-        <h3>Part 2: Bells &amp; Whistles</h3>
-        <p>Optional extras and upsampling examples.</p>
-        <div class="gallery" id="bellsWhistlesGallery"></div>
+      <section class="section" id="optional">
+        <div class="section-header">
+          <div>
+            <h3>Part 2: Bells &amp; Whistles</h3>
+            <p>
+              Optional transformed anagrams, UCB-logo translations, a saved
+              denoising trajectory, and the optional 256x256 upsampling cell.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="optionalGallery"></div>
       </section>
+
+      <div class="footer-note">
+        All figures on this page come from the saved outputs associated with
+        `part_a/part_5a.ipynb`.
+      </div>
     </div>
 
     <div class="modal" id="imageModal" aria-hidden="true">
@@ -368,333 +699,754 @@
     </div>
 
     <script>
+      const I_STARTS = [1, 3, 5, 7, 10, 20];
+      const TRAJECTORY_STEPS = [0, 5, 10, 15, 20, 25, 30];
+
+      const makeIStartCards = (files, label, captionBase, badge) =>
+        files.map((src, index) => ({
+          src,
+          badge,
+          title: `${label} - i_start=${I_STARTS[index]}`,
+          caption: `${captionBase} Starting index ${I_STARTS[index]}.`,
+        }));
+
+      const makeTrajectoryCards = (files) =>
+        files.map((src, index) => ({
+          src,
+          badge: "Trajectory",
+          title: `Waterfalls trajectory - step ${TRAJECTORY_STEPS[index]}`,
+          caption: `Saved reverse-diffusion trajectory snapshot at step ${TRAJECTORY_STEPS[index]}.`,
+        }));
+
       const figureSections = {
         setupGallery: [
           {
-            type: "grid",
-            cols: 3,
-            cards: [
+            type: "subsection",
+            title: "Cell 15 - Stage 1 sampling outputs",
+            note: "Three prompt-conditioned Stage 1 samples at 64x64.",
+            content: [
               {
-                src: "outputs/cell_cells_16_outputs_3_data_text_html_3_1_40614cd2d7.png",
-                alt: "Stage 1 - a high quality photo",
-                title: "Stage 1 - a high quality photo",
-                caption: "Stage 1 output (64x64) with 20 inference steps.",
-                topLabel: "Stage 1 (20 Steps): A High Quality Photo",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_16_outputs_3_data_text_html_5_1_46dec511df.png",
-                alt: "Stage 1 - an oil painting of an old man",
-                title: "Stage 1 - an oil painting of an old man",
-                caption: "Stage 1 output (64x64) with 20 inference steps.",
-                topLabel: "Stage 1 (20 Steps): An Oil Painting of an Old Man",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_16_outputs_3_data_text_html_7_1_ea1ccf88b2.png",
-                alt: "Stage 1 - a lithograph of waterfalls",
-                title: "Stage 1 - a lithograph of waterfalls",
-                caption: "Stage 1 output (64x64) with 20 inference steps.",
-                topLabel: "Stage 1 (20 Steps): A Lithograph of Waterfalls",
-                imageOnly: true,
-              },
-            ],
-          },
-          {
-            type: "grid",
-            cols: 3,
-            cards: [
-              {
-                src: "outputs/cell_cells_16_outputs_4_data_text_html_3_1_9dbdef1656.png",
-                alt: "Stage 2 - a high quality photo",
-                title: "Stage 2 - a high quality photo",
-                caption:
-                  "Stage 2 output (256x256), upsampled from Stage 1 using 20 inference steps.",
-                topLabel: "Stage 2 (20 Steps): A High Quality Photo",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_16_outputs_4_data_text_html_5_1_d9bef00779.png",
-                alt: "Stage 2 - an oil painting of an old man",
-                title: "Stage 2 - an oil painting of an old man",
-                caption:
-                  "Stage 2 output (256x256), upsampled from Stage 1 using 20 inference steps.",
-                topLabel: "Stage 2 (20 Steps): An Oil Painting of an Old Man",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_16_outputs_4_data_text_html_7_1_6159941645.png",
-                alt: "Stage 2 - a lithograph of waterfalls",
-                title: "Stage 2 - a lithograph of waterfalls",
-                caption:
-                  "Stage 2 output (256x256), upsampled from Stage 1 using 20 inference steps.",
-                topLabel: "Stage 2 (20 Steps): A Lithograph of Waterfalls",
-                imageOnly: true,
+                type: "grid",
+                cols: 3,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_16_outputs_3_data_text_html_3_1_40614cd2d7.png",
+                    badge: "Stage 1",
+                    title: 'Prompt: "a high quality photo"',
+                    caption:
+                      'Stage 1 sample for the prompt "a high quality photo" with 20 inference steps.',
+                  },
+                  {
+                    src: "outputs/cell_cells_16_outputs_3_data_text_html_5_1_46dec511df.png",
+                    badge: "Stage 1",
+                    title: 'Prompt: "an oil painting of an old man"',
+                    caption:
+                      'Stage 1 sample for the prompt "an oil painting of an old man" with 20 inference steps.',
+                  },
+                  {
+                    src: "outputs/cell_cells_16_outputs_3_data_text_html_7_1_ea1ccf88b2.png",
+                    badge: "Stage 1",
+                    title: 'Prompt: "a lithograph of waterfalls"',
+                    caption:
+                      'Stage 1 sample for the prompt "a lithograph of waterfalls" with 20 inference steps.',
+                  },
+                ],
               },
             ],
           },
           {
-            type: "grid",
-            cols: 2,
-            cards: [
+            type: "subsection",
+            title: "Cell 15 - Stage 2 upsampling outputs",
+            note: "The same three prompts after Stage 2 upsampling to 256x256.",
+            content: [
               {
-                src: "outputs/cell_cells_16_outputs_6_data_text_html_3_1_929d696f24.png",
-                alt: "a high quality photo - 5 steps",
-                title: "a high quality photo - 5 steps",
-                caption:
-                  "Stage 1 output for the first prompt with 5 inference steps.",
-                topLabel: "Step Comparison: A High Quality Photo - 5 Steps",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_16_outputs_8_data_text_html_3_1_330c009605.png",
-                alt: "a high quality photo - 50 steps",
-                title: "a high quality photo - 50 steps",
-                caption:
-                  "Stage 1 output for the first prompt with 50 inference steps.",
-                topLabel: "Step Comparison: A High Quality Photo - 50 Steps",
-                imageOnly: true,
-              },
-            ],
-          },
-        ],
-        samplingLoopsGallery: [
-          {
-            type: "wide",
-            badge: "Scheduler snapshot",
-            src: "outputs/cell_cells_17_source_9_1_66c3081437.png",
-            alt: "Scheduler snapshot",
-            title: "Scheduler Snapshot",
-            caption:
-              "The scheduler configuration used for the baseline sampling loop.",
-            description:
-              "This is the setup that controls the diffusion timesteps for the first sampling experiments.",
-          },
-          {
-            type: "grid",
-            cols: 4,
-            cards: [
-              {
-                src: "outputs/cell_cells_20_outputs_2_data_text_html_1_1_652ad12aa5.png",
-                alt: "Campanile original",
-                title: "Campanile Original",
-                caption:
-                  "The original Campanile image used as the clean input.",
-                topLabel: "Original Image",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_23_outputs_1_data_text_html_3_1_8b541127cf.png",
-                alt: "Campanile noisy t=250",
-                title: "Campanile Noisy t=250",
-                caption: "Noisy image at t=250.",
-                topLabel: "Noisy t=250",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_23_outputs_2_data_text_html_3_1_8c95afd146.png",
-                alt: "Campanile noisy t=500",
-                title: "Campanile Noisy t=500",
-                caption: "Noisy image at t=500.",
-                topLabel: "Noisy t=500",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_23_outputs_3_data_text_html_3_1_1cfc9913ae.png",
-                alt: "Campanile noisy t=750",
-                title: "Campanile Noisy t=750",
-                caption: "Noisy image at t=750.",
-                topLabel: "Noisy t=750",
-                imageOnly: true,
+                type: "grid",
+                cols: 3,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_16_outputs_4_data_text_html_3_1_9dbdef1656.png",
+                    badge: "Stage 2",
+                    title: 'Upsampled: "a high quality photo"',
+                    caption:
+                      'Stage 2 upsampled sample for the prompt "a high quality photo".',
+                  },
+                  {
+                    src: "outputs/cell_cells_16_outputs_4_data_text_html_5_1_d9bef00779.png",
+                    badge: "Stage 2",
+                    title: 'Upsampled: "an oil painting of an old man"',
+                    caption:
+                      'Stage 2 upsampled sample for the prompt "an oil painting of an old man".',
+                  },
+                  {
+                    src: "outputs/cell_cells_16_outputs_4_data_text_html_7_1_6159941645.png",
+                    badge: "Stage 2",
+                    title: 'Upsampled: "a lithograph of waterfalls"',
+                    caption:
+                      'Stage 2 upsampled sample for the prompt "a lithograph of waterfalls".',
+                  },
+                ],
               },
             ],
-            // cards: [
-            //   { badge: "1.1 Forward process", src: "outputs/cell_cells_20_outputs_2_data_text_html_1_1_652ad12aa5.png", alt: "Forward Process", title: "Forward Process", caption: "Adding noise progressively to the clean digit.", description: "The clean digit is easy to read at low sigma, but the structure starts to dissolve quickly once noise rises above the training regime." },
-            //   { badge: "1.2 Classical denoising", src: "outputs/cell_cells_23_outputs_2_data_text_html_3_1_8c95afd146.png", alt: "Classical Denoising", title: "Classical Denoising", caption: "Traditional denoising at multiple noise levels.", description: "The model remains strongest near sigma = 0.5, but the reconstruction quality drops when the corrupted input strays too far from the training distribution." },
-            //   { badge: "1.3 One-step denoising", src: "outputs/cell_cells_25_outputs_1_data_text_html_3_1_ee8c385c30.png", alt: "One-Step Denoising", title: "One-Step Denoising", caption: "One-step passes from noisy input back to a digit.", description: "When the input contains no digit structure at all, the network hallucinates digit-like blobs. That is useful evidence that it learned a strong prior, but it is not yet a true generative sampler." },
-            //   { badge: "1.4 Iterative denoising", src: "outputs/cell_cells_29_source_1_1_068e4ec79e.png", alt: "Iterative Denoising", title: "Iterative Denoising", caption: "Iterative denoising trajectory and intermediate samples.", description: "The model learns the broad denoising mapping almost immediately, then spends the rest of training tightening the details." }
-            // ]
           },
           {
-            type: "grid",
-            cols: 3,
-            cards: [
+            type: "subsection",
+            title: "Cell 15 - Inference-step comparison",
+            note: "The notebook reruns the first prompt at 5 steps and 50 steps for a direct comparison.",
+            content: [
               {
-                src: "outputs/cell_cells_25_outputs_1_data_text_html_5_1_d862aeaeef.png",
-                alt: "Campanile gaussian t=250",
-                title: "Gaussian t = 250",
-                caption:
-                  "Cell 23: Gaussian denoising applied to the t = 250 noisy image.",
-                topLabel: "Gaussian denoising at t = 250",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_25_outputs_2_data_text_html_5_1_3ffa4dd8d7.png",
-                alt: "Campanile gaussian t=500",
-                title: "Gaussian t = 500",
-                caption:
-                  "Cell 23: Gaussian denoising applied to the t = 500 noisy image.",
-                topLabel: "Gaussian denoising at t = 500",
-                imageOnly: true,
-              },
-              {
-                src: "outputs/cell_cells_25_outputs_3_data_text_html_5_1_fb70a86629.png",
-                alt: "Campanile gaussian t=750",
-                title: "Gaussian t = 750",
-                caption:
-                  "Cell 23: Gaussian denoising applied to the t = 750 noisy image.",
-                topLabel: "Gaussian denoising at t = 750",
-                imageOnly: true,
+                type: "grid",
+                cols: 2,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_16_outputs_6_data_text_html_3_1_929d696f24.png",
+                    badge: "5 steps",
+                    title: '"a high quality photo" - 5 steps',
+                    caption:
+                      'Stage 1 sample for "a high quality photo" using 5 inference steps.',
+                  },
+                  {
+                    src: "outputs/cell_cells_16_outputs_8_data_text_html_3_1_330c009605.png",
+                    badge: "50 steps",
+                    title: '"a high quality photo" - 50 steps',
+                    caption:
+                      'Stage 1 sample for "a high quality photo" using 50 inference steps.',
+                  },
+                ],
               },
             ],
           },
         ],
-        guidedSamplingGallery: [
+
+        samplingGallery: [
           {
-            type: "wide",
-            badge: "1.5 Sampling",
-            src: "outputs/cell_cells_33_outputs_1_data_text_html_5_1_fed7447a75.png",
-            alt: "Diffusion model sampling",
-            title: "Diffusion Model Sampling",
-            caption:
-              "Pure generation using the sampling loop and text prompts.",
+            type: "subsection",
+            title: "Diffusion primer figures inside Part 1",
+            note: "These are the two explanatory figures embedded directly in the notebook markdown for the sampling-loops section.",
+            content: [
+              {
+                type: "grid",
+                cols: 2,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_17_source_9_1_66c3081437.png",
+                    badge: "Primer",
+                    title: "DDPM Markov-chain primer figure",
+                    caption:
+                      "The diffusion-model primer image embedded near the start of Part 1.",
+                    summary:
+                      "Reference figure used to introduce the forward and reverse diffusion process.",
+                  },
+                  {
+                    src: "outputs/cell_cells_29_source_1_1_068e4ec79e.png",
+                    badge: "Primer",
+                    title: "Interpolation figure for iterative denoising",
+                    caption:
+                      "The interpolation illustration embedded in the iterative-denoising subsection.",
+                    summary:
+                      "Reference figure used to motivate the strided reverse process in 1.4.",
+                  },
+                ],
+              },
+            ],
           },
           {
-            type: "grid",
-            cols: 2,
-            cards: [
+            type: "subsection",
+            title: "1.1 Implementing the forward process",
+            note: "Original Campanile input plus noisy versions at timesteps 250, 500, and 750.",
+            content: [
               {
-                badge: "1.6 CFG",
-                src: "outputs/cell_cells_35_outputs_1_data_text_html_3_1_7587dbc28b.png",
-                alt: "Classifier-Free Guidance",
-                title: "Classifier-Free Guidance",
-                caption: "Guided samples improve class consistency.",
-                description:
-                  "The conditioning signal gives the sampler a clearer target, and the generated digits become more faithful to the prompt.",
+                type: "grid",
+                cols: 4,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_20_outputs_2_data_text_html_1_1_652ad12aa5.png",
+                    badge: "Input",
+                    title: "Campanile test image",
+                    caption:
+                      "The resized Campanile image used as the base input for the forward process.",
+                  },
+                  {
+                    src: "outputs/cell_cells_23_outputs_1_data_text_html_3_1_8b541127cf.png",
+                    badge: "t = 250",
+                    title: "Forward process - noisy Campanile at t=250",
+                    caption:
+                      "Forward-process result after adding noise at timestep 250.",
+                  },
+                  {
+                    src: "outputs/cell_cells_23_outputs_2_data_text_html_3_1_8c95afd146.png",
+                    badge: "t = 500",
+                    title: "Forward process - noisy Campanile at t=500",
+                    caption:
+                      "Forward-process result after adding noise at timestep 500.",
+                  },
+                  {
+                    src: "outputs/cell_cells_23_outputs_3_data_text_html_3_1_1cfc9913ae.png",
+                    badge: "t = 750",
+                    title: "Forward process - noisy Campanile at t=750",
+                    caption:
+                      "Forward-process result after adding noise at timestep 750.",
+                  },
+                ],
               },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "1.2 Classical Denoising",
+            note: "For each noisy Campanile image, the notebook shows the noisy input beside a Gaussian-blur baseline.",
+            content: [
               {
-                badge: "1.7 I2I",
-                src: "outputs/cell_cells_37_outputs_1_data_text_html_3_1_065d97f979.png",
-                alt: "Image-to-Image Translation",
-                title: "Image-to-Image Translation",
-                caption: "Prompt-guided edits on an input image.",
-                description:
-                  "Prompt guidance lets the model preserve some structure from the source while pulling the output toward the requested style.",
+                type: "grid",
+                cols: 3,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_25_outputs_1_data_text_html_3_1_ee8c385c30.png",
+                    badge: "t = 250",
+                    title: "Noisy input at t=250",
+                    caption:
+                      "The t=250 noisy Campanile used for classical denoising.",
+                  },
+                  {
+                    src: "outputs/cell_cells_25_outputs_2_data_text_html_3_1_27edffb786.png",
+                    badge: "t = 500",
+                    title: "Noisy input at t=500",
+                    caption:
+                      "The t=500 noisy Campanile used for classical denoising.",
+                  },
+                  {
+                    src: "outputs/cell_cells_25_outputs_3_data_text_html_3_1_f0762f3ed7.png",
+                    badge: "t = 750",
+                    title: "Noisy input at t=750",
+                    caption:
+                      "The t=750 noisy Campanile used for classical denoising.",
+                  },
+                  {
+                    src: "outputs/cell_cells_25_outputs_1_data_text_html_5_1_d862aeaeef.png",
+                    badge: "Gaussian",
+                    title: "Gaussian-blur baseline at t=250",
+                    caption:
+                      "Gaussian-blur result for the t=250 noisy Campanile image.",
+                  },
+                  {
+                    src: "outputs/cell_cells_25_outputs_2_data_text_html_5_1_3ffa4dd8d7.png",
+                    badge: "Gaussian",
+                    title: "Gaussian-blur baseline at t=500",
+                    caption:
+                      "Gaussian-blur result for the t=500 noisy Campanile image.",
+                  },
+                  {
+                    src: "outputs/cell_cells_25_outputs_3_data_text_html_5_1_fb70a86629.png",
+                    badge: "Gaussian",
+                    title: "Gaussian-blur baseline at t=750",
+                    caption:
+                      "Gaussian-blur result for the t=750 noisy Campanile image.",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "1.3-1.4 One Step and Iterative Denoising",
+            note: "Saved comparison outputs from the iterative-denoising cell, including the iterative result, the one-step result, and the Gaussian baseline.",
+            content: [
+              {
+                type: "grid",
+                cols: 4,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_20_outputs_2_data_text_html_1_1_652ad12aa5.png",
+                    badge: "Original",
+                    title: "Original",
+                    caption:
+                      "Final clean-image estimate from the iterative denoising loop.",
+                  },
+                  {
+                    src: "outputs/cell_cells_33_outputs_1_data_text_html_5_1_fed7447a75.png",
+                    badge: "Iterative",
+                    title: "Iterative denoising",
+                    caption:
+                      "Final clean-image estimate from the iterative denoising loop.",
+                  },
+                  {
+                    src: "outputs/cell_cells_33_outputs_1_data_text_html_7_1_982f0ea577.png",
+                    badge: "One step",
+                    title: "One-step denoising",
+                    caption:
+                      "Single-step denoising estimate shown for comparison against iterative denoising.",
+                  },
+                  {
+                    src: "outputs/cell_cells_33_outputs_1_data_text_html_9_1_44baf1c8e1.png",
+                    badge: "Gaussian",
+                    title: "Gaussian baseline",
+                    caption:
+                      "Gaussian-blur comparison image included in the iterative-denoising results cell.",
+                  },
+                ],
               },
             ],
           },
         ],
-        localEditsGallery: [
+
+        generationGallery: [
           {
-            type: "grid",
-            cols: 3,
-            cards: [
+            type: "subsection",
+            title: "1.5 Diffusion Model Sampling",
+            note: 'Five unconditional samples from pure noise with the prompt "a high quality photo".',
+            content: [
               {
-                badge: "1.7.1 Web prep",
-                src: "outputs/cell_cells_39_outputs_2_data_text_html_3_1_1aea7aa190.png",
-                alt: "Editing hand-drawn and web images",
-                title: "Editing Hand-Drawn and Web Images",
-                caption:
-                  "The hand-drawn and web-image edit pipeline on the same canvas.",
-                description:
-                  "This part pushes the model into practical image editing workflows.",
-              },
-              {
-                badge: "1.7.1 Web image",
-                src: "outputs/cell_cells_42_outputs_2_data_text_html_1_1_a68e311cc8.png",
-                alt: "Web image edit",
-                title: "Web Image Edit",
-                caption:
-                  "A web landmark pushed through the diffusion edit path.",
-                description:
-                  "The model keeps the broad layout while shifting the appearance toward the prompt.",
-              },
-              {
-                badge: "1.7.1 Hand-drawn",
-                src: "outputs/cell_cells_43_outputs_2_data_text_html_3_1_6071a4fe83.png",
-                alt: "Hand-drawn edit",
-                title: "Hand-Drawn Edit",
-                caption: "A sketch transformed into a prompt-matched image.",
-                description:
-                  "The conditioning signal gives the sampler a clearer target, and the generated image becomes more faithful to the prompt.",
+                type: "grid",
+                cols: 5,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_35_outputs_1_data_text_html_3_1_7587dbc28b.png",
+                    title: "Sample 1",
+                    caption:
+                      'Unconditional diffusion sample 1 for "a high quality photo".',
+                  },
+                  {
+                    src: "outputs/cell_cells_35_outputs_1_data_text_html_5_1_4704c6f363.png",
+                    title: "Sample 2",
+                    caption:
+                      'Unconditional diffusion sample 2 for "a high quality photo".',
+                  },
+                  {
+                    src: "outputs/cell_cells_35_outputs_1_data_text_html_7_1_63247291da.png",
+                    title: "Sample 3",
+                    caption:
+                      'Unconditional diffusion sample 3 for "a high quality photo".',
+                  },
+                  {
+                    src: "outputs/cell_cells_35_outputs_1_data_text_html_9_1_2076f8e1db.png",
+                    title: "Sample 4",
+                    caption:
+                      'Unconditional diffusion sample 4 for "a high quality photo".',
+                  },
+                  {
+                    src: "outputs/cell_cells_35_outputs_1_data_text_html_11_1_051faf8f2f.png",
+                    title: "Sample 5",
+                    caption:
+                      'Unconditional diffusion sample 5 for "a high quality photo".',
+                  },
+                ],
               },
             ],
           },
           {
-            type: "grid",
-            cols: 2,
-            cards: [
+            type: "subsection",
+            title: "1.6 Classifier Free Guidance",
+            note: "The same prompt rendered with CFG at scale gamma = 7.",
+            content: [
               {
-                badge: "1.7.2 Inpainting",
-                src: "outputs/cell_cells_45_outputs_2_data_text_html_3_1_a50a89d35b.png",
-                alt: "Inpainting",
-                title: "Inpainting",
-                caption: "Masked edits that respect the visible context.",
-                description:
-                  "The model fills missing areas while keeping the surrounding image structure coherent.",
-              },
-              {
-                badge: "1.7.3 Text-conditioned",
-                src: "outputs/cell_cells_48_outputs_1_data_text_html_3_1_9ec05d2b57.png",
-                alt: "Text-conditioned image-to-image translation",
-                title: "Text-Conditioned Translation",
-                caption: "Editing a source image into a prompt-driven target.",
-                description:
-                  "This is the cleanest example of the model doing controlled image-to-image translation instead of pure sampling.",
+                type: "grid",
+                cols: 5,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_37_outputs_1_data_text_html_3_1_065d97f979.png",
+                    title: "Sample 1 with CFG",
+                    caption:
+                      'Classifier-free guided sample 1 for "a high quality photo" with gamma = 7.',
+                  },
+                  {
+                    src: "outputs/cell_cells_37_outputs_1_data_text_html_5_1_50c2e13078.png",
+                    title: "Sample 2 with CFG",
+                    caption:
+                      'Classifier-free guided sample 2 for "a high quality photo" with gamma = 7.',
+                  },
+                  {
+                    src: "outputs/cell_cells_37_outputs_1_data_text_html_7_1_8f283ba21e.png",
+                    title: "Sample 3 with CFG",
+                    caption:
+                      'Classifier-free guided sample 3 for "a high quality photo" with gamma = 7.',
+                  },
+                  {
+                    src: "outputs/cell_cells_37_outputs_1_data_text_html_9_1_993bc7b26b.png",
+                    title: "Sample 4 with CFG",
+                    caption:
+                      'Classifier-free guided sample 4 for "a high quality photo" with gamma = 7.',
+                  },
+                  {
+                    src: "outputs/cell_cells_37_outputs_1_data_text_html_11_1_be98611874.png",
+                    title: "Sample 5 with CFG",
+                    caption:
+                      'Classifier-free guided sample 5 for "a high quality photo" with gamma = 7.',
+                  },
+                ],
               },
             ],
           },
         ],
+
+        translationGallery: [
+          {
+            type: "subsection",
+            title: "1.7 Image-to-image Translation",
+            note: 'Campanile edits using the prompt "a high quality photo" at six different starting indices.',
+            content: [
+              {
+                type: "grid",
+                cols: 3,
+                cards: makeIStartCards(
+                  [
+                    "outputs/cell_cells_39_outputs_2_data_text_html_3_1_1aea7aa190.png",
+                    "outputs/cell_cells_39_outputs_2_data_text_html_5_1_29e77433a4.png",
+                    "outputs/cell_cells_39_outputs_2_data_text_html_7_1_9bcd834d11.png",
+                    "outputs/cell_cells_39_outputs_2_data_text_html_9_1_7f237d838b.png",
+                    "outputs/cell_cells_39_outputs_2_data_text_html_11_1_b54afacfec.png",
+                    "outputs/cell_cells_39_outputs_2_data_text_html_13_1_dfa16586ed.png",
+                  ],
+                  "Campanile edit",
+                  'Unconditional image-to-image translation of the Campanile with the prompt "a high quality photo".',
+                  //   "1.7"
+                ),
+              },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "1.7.1 Editing Hand-Drawn and Web Images",
+            note: "The notebook first preprocesses a downloaded landmark image, then a hand-drawn sketch, and shows six edits for each.",
+            content: [
+              {
+                type: "grid",
+                cols: 1,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_42_outputs_2_data_text_html_1_1_a68e311cc8.png",
+                    badge: "Web input",
+                    title: "Processed landmark input",
+                    caption:
+                      "The downloaded web image after notebook preprocessing for diffusion editing.",
+                    summary:
+                      "Input image used for the six web-image edits below.",
+                  },
+                ],
+              },
+              {
+                type: "grid",
+                cols: 3,
+                cards: makeIStartCards(
+                  [
+                    "outputs/cell_cells_43_outputs_2_data_text_html_3_1_6071a4fe83.png",
+                    "outputs/cell_cells_43_outputs_2_data_text_html_5_1_5a5479cb78.png",
+                    "outputs/cell_cells_43_outputs_2_data_text_html_7_1_9ff0f37b13.png",
+                    "outputs/cell_cells_43_outputs_2_data_text_html_9_1_264b1c53b8.png",
+                    "outputs/cell_cells_43_outputs_2_data_text_html_11_1_1ed4d4b267.png",
+                    "outputs/cell_cells_43_outputs_2_data_text_html_13_1_33f8093646.png",
+                  ],
+                  "Web-image edit",
+                  'Projection of the downloaded landmark image back to the natural-image manifold with prompt "a high quality photo".',
+                  "Web",
+                ),
+              },
+              {
+                type: "grid",
+                cols: 2,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_44_outputs_2_data_text_html_1_1_191a7de445.png",
+                    badge: "Sketch",
+                    title: "Processed hand-drawn input",
+                    caption:
+                      "The hand-drawn house after preprocessing for diffusion editing.",
+                  },
+                  {
+                    src: "outputs/cell_cells_44_outputs_3_data_text_html_3_1_4b8e2455be.png",
+                    badge: "Sketch",
+                    title: "Hand-drawn sketch preview",
+                    caption:
+                      "Preview of the house sketch shown in the notebook before editing.",
+                  },
+                ],
+              },
+              {
+                type: "grid",
+                cols: 3,
+                cards: makeIStartCards(
+                  [
+                    "outputs/cell_cells_45_outputs_2_data_text_html_3_1_a50a89d35b.png",
+                    "outputs/cell_cells_45_outputs_2_data_text_html_5_1_8a0824fecd.png",
+                    "outputs/cell_cells_45_outputs_2_data_text_html_7_1_3a134b02cb.png",
+                    "outputs/cell_cells_45_outputs_2_data_text_html_9_1_b559de72a3.png",
+                    "outputs/cell_cells_45_outputs_2_data_text_html_11_1_fee6b0327b.png",
+                    "outputs/cell_cells_45_outputs_2_data_text_html_13_1_42ceb330c4.png",
+                  ],
+                  "Hand-drawn edit",
+                  'Projection of the hand-drawn house toward a natural image with prompt "a high quality photo".',
+                  "Sketch",
+                ),
+              },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "1.7.2 Inpainting",
+            note: "The notebook first visualizes the mask setup, then shows the final Campanile inpainting result.",
+            content: [
+              {
+                type: "grid",
+                cols: 3,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_47_outputs_1_data_text_html_5_1_1700f5d03f.png",
+                    badge: "Mask",
+                    title: "Inpainting mask visualization",
+                    caption:
+                      "Mask view from the Campanile inpainting setup cell.",
+                  },
+                  {
+                    src: "outputs/cell_cells_47_outputs_1_data_text_html_7_1_3abeffb491.png",
+                    badge: "Mask",
+                    title: "Masked region preview",
+                    caption:
+                      "The image region selected for replacement in the Campanile inpainting setup.",
+                  },
+                  {
+                    src: "outputs/cell_cells_48_outputs_1_data_text_html_3_1_9ec05d2b57.png",
+                    badge: "Inpainted",
+                    title: "Final Campanile inpainting result",
+                    caption:
+                      "The final inpainted Campanile output produced by the RePaint-style loop.",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "1.7.3 Text-Conditioned Image-to-image Translation",
+            note: "Three separate prompt-guided edit sweeps are saved: Campanile to rocket ship, landmark to snowy mountain village, and hand-drawn house to the notebook's Amalfi prompt.",
+            content: [
+              {
+                type: "grid",
+                cols: 3,
+                cards: makeIStartCards(
+                  [
+                    "outputs/cell_cells_50_outputs_2_data_text_html_3_1_338e110256.png",
+                    "outputs/cell_cells_50_outputs_2_data_text_html_5_1_83c93fab4e.png",
+                    "outputs/cell_cells_50_outputs_2_data_text_html_7_1_6a332383be.png",
+                    "outputs/cell_cells_50_outputs_2_data_text_html_9_1_ca49885ac9.png",
+                    "outputs/cell_cells_50_outputs_2_data_text_html_11_1_785cc55e41.png",
+                    "outputs/cell_cells_50_outputs_2_data_text_html_13_1_365131daa2.png",
+                  ],
+                  'Campanile -> "a rocket ship"',
+                  'Text-conditioned Campanile edit with the prompt "a rocket ship".',
+                  "Rocket",
+                ),
+              },
+              {
+                type: "grid",
+                cols: 3,
+                cards: makeIStartCards(
+                  [
+                    "outputs/cell_cells_50_outputs_4_data_text_html_3_1_212cc1cfe8.png",
+                    "outputs/cell_cells_50_outputs_4_data_text_html_5_1_7762cf4d3d.png",
+                    "outputs/cell_cells_50_outputs_4_data_text_html_7_1_22e2f49cf1.png",
+                    "outputs/cell_cells_50_outputs_4_data_text_html_9_1_3dfd643d55.png",
+                    "outputs/cell_cells_50_outputs_4_data_text_html_11_1_4274e16d48.png",
+                    "outputs/cell_cells_50_outputs_4_data_text_html_13_1_1992f8ddad.png",
+                  ],
+                  "Landmark -> snowy mountain village",
+                  'Text-conditioned landmark edit with the prompt "an oil painting of a snowy mountain village".',
+                  "Village",
+                ),
+              },
+              {
+                type: "grid",
+                cols: 3,
+                cards: makeIStartCards(
+                  [
+                    "outputs/cell_cells_50_outputs_6_data_text_html_3_1_eaf7d45071.png",
+                    "outputs/cell_cells_50_outputs_6_data_text_html_5_1_aafe8f29c0.png",
+                    "outputs/cell_cells_50_outputs_6_data_text_html_7_1_a06c1ec057.png",
+                    "outputs/cell_cells_50_outputs_6_data_text_html_9_1_2839f5254f.png",
+                    "outputs/cell_cells_50_outputs_6_data_text_html_11_1_b43d57c52f.png",
+                    "outputs/cell_cells_50_outputs_6_data_text_html_13_1_67c6bc125e.png",
+                  ],
+                  "Sketch -> notebook Amalfi prompt",
+                  'Text-conditioned sketch edit with the notebook prompt "a photo of the amalfi cost".',
+                  "Amalfi",
+                ),
+              },
+            ],
+          },
+        ],
+
         compositionsGallery: [
           {
-            type: "grid",
-            cols: 2,
-            cards: [
+            type: "subsection",
+            title: "1.8 Visual Anagrams",
+            note: "The upside-down old-man / campfire illusion saved by the notebook visual-anagram function.",
+            content: [
               {
-                badge: "1.8 Visual anagrams",
-                src: "outputs/cell_cells_50_outputs_6_data_text_html_3_1_eaf7d45071.png",
-                alt: "Visual Anagrams",
-                title: "Visual Anagrams",
-                caption: "One latent, two views, two prompts.",
-                description:
-                  "The creative compositions show that the model can support structured prompt conflicts.",
+                type: "grid",
+                cols: 2,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_52_outputs_1_data_text_html_3_1_2833cfe502.png",
+                    badge: "Normal",
+                    title: "Visual anagram - normal view",
+                    caption:
+                      'Normal orientation of the visual anagram generated from "an oil painting of an old man" and "an oil painting of people around a campfire".',
+                  },
+                  {
+                    src: "outputs/cell_cells_52_outputs_1_data_text_html_5_1_0de1cc5332.png",
+                    badge: "Flipped",
+                    title: "Visual anagram - upside-down view",
+                    caption:
+                      "Upside-down orientation of the same visual anagram, revealing the alternate prompt.",
+                  },
+                ],
               },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "1.9 Hybrid Images",
+            note: "Two hybrid-image outputs produced from different prompt pairs in the factorized-diffusion section.",
+            content: [
               {
-                badge: "1.9 Hybrid images",
-                src: "outputs/cell_cells_52_outputs_1_data_text_html_3_1_2833cfe502.png",
-                alt: "Hybrid Images",
-                title: "Hybrid Images",
-                caption:
-                  "Low-frequency content from one prompt and high-frequency content from another.",
-                description:
-                  "The same underlying latent can support multiple readings when the sampling rule is changed carefully.",
+                type: "grid",
+                cols: 2,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_55_outputs_1_data_text_html_3_1_06d9800a9d.png",
+                    badge: "Hybrid 1",
+                    title: "Hybrid image - old man / campfire",
+                    caption:
+                      'Hybrid image generated from "an oil painting of an old man" and "an oil painting of people around a campfire".',
+                  },
+                  {
+                    src: "outputs/cell_cells_55_outputs_2_data_text_html_3_1_a6f0485c15.png",
+                    badge: "Hybrid 2",
+                    title: "Hybrid image - skull / waterfalls",
+                    caption:
+                      'Hybrid image generated from "a lithograph of a skull" and "a lithograph of waterfalls".',
+                  },
+                ],
               },
             ],
           },
         ],
-        bellsWhistlesGallery: [
+
+        optionalGallery: [
           {
-            type: "grid",
-            cols: 2,
-            cards: [
+            type: "subsection",
+            title: "Part 2 - Additional transformed visual anagrams",
+            note: "Optional anagrams using transformations beyond the upside-down flip: 180-degree rotation and horizontal reflection.",
+            content: [
               {
-                badge: "Optional",
-                src: "outputs/cell_cells_57_outputs_2_data_text_html_3_1_d6390400dd.png",
-                alt: "Bells and whistles edits",
-                title: "Optional Edits",
-                caption: "Extra visual anagrams and alternate edits.",
-                description:
-                  "These optional examples explore more than the base assignment asked for.",
+                type: "grid",
+                cols: 2,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_57_outputs_2_data_text_html_3_1_d6390400dd.png",
+                    badge: "180 rotation",
+                    title: "Rotation anagram - normal view",
+                    caption:
+                      "Optional anagram created with a 180-degree rotation transform, shown in its normal orientation.",
+                  },
+                  {
+                    src: "outputs/cell_cells_57_outputs_2_data_text_html_5_1_5a19ca749c.png",
+                    badge: "180 rotation",
+                    title: "Rotation anagram - rotated view",
+                    caption:
+                      "Optional anagram created with a 180-degree rotation transform, shown in its transformed orientation.",
+                  },
+                  {
+                    src: "outputs/cell_cells_57_outputs_4_data_text_html_3_1_401a94806b.png",
+                    badge: "H-flip",
+                    title: "Horizontal-flip anagram - normal view",
+                    caption:
+                      "Optional anagram created with a horizontal reflection transform, shown in its normal orientation.",
+                  },
+                  {
+                    src: "outputs/cell_cells_57_outputs_4_data_text_html_5_1_f274df6966.png",
+                    badge: "H-flip",
+                    title: "Horizontal-flip anagram - mirrored view",
+                    caption:
+                      "Optional anagram created with a horizontal reflection transform, shown in its mirrored orientation.",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "Part 2 - UCB logo translation",
+            note: 'The optional logo experiment preprocesses the UCB seal and then edits it with the prompt "an oil painting of an old man".',
+            content: [
+              {
+                type: "grid",
+                cols: 1,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_58_outputs_2_data_text_html_1_1_87ab1ad5e2.png",
+                    badge: "Logo input",
+                    title: "Processed UCB logo input",
+                    caption:
+                      "The UCB seal after preprocessing for the optional text-conditioned translation experiment.",
+                    summary:
+                      "Input figure for the translation sweep shown immediately below.",
+                  },
+                ],
               },
               {
-                badge: "Upsampling",
-                src: "outputs/cell_cells_58_outputs_7_data_text_html_15_1_a7f6da24b6.png",
-                alt: "Upsampling",
-                title: "Upsampling Example",
-                caption:
-                  "The stage-two upsampling path applied to a generated image.",
-                description:
-                  "This closes out the notebook with a higher-resolution example of the generated output.",
+                type: "grid",
+                cols: 3,
+                cards: makeIStartCards(
+                  [
+                    "outputs/cell_cells_58_outputs_5_data_text_html_3_1_490d21d6c9.png",
+                    "outputs/cell_cells_58_outputs_5_data_text_html_5_1_55f1d1df89.png",
+                    "outputs/cell_cells_58_outputs_5_data_text_html_7_1_a7026fcbd7.png",
+                    "outputs/cell_cells_58_outputs_5_data_text_html_9_1_eee9797e36.png",
+                    "outputs/cell_cells_58_outputs_5_data_text_html_11_1_ad98544eee.png",
+                    "outputs/cell_cells_58_outputs_5_data_text_html_13_1_236a01f2ef.png",
+                  ],
+                  "UCB logo translation",
+                  'Optional text-conditioned UCB logo edit with the prompt "an oil painting of an old man".',
+                  "Logo",
+                ),
+              },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "Part 2 - Saved denoising trajectory",
+            note: 'The optional trajectory cell stores seven snapshots while generating a prompt-guided image for "a lithograph of waterfalls".',
+            content: [
+              {
+                type: "grid",
+                cols: 4,
+                cards: makeTrajectoryCards([
+                  "outputs/cell_cells_58_outputs_7_data_text_html_3_1_7ea400232b.png",
+                  "outputs/cell_cells_58_outputs_7_data_text_html_5_1_f2b88e441d.png",
+                  "outputs/cell_cells_58_outputs_7_data_text_html_7_1_b9e9ff3d47.png",
+                  "outputs/cell_cells_58_outputs_7_data_text_html_9_1_35c28e62a8.png",
+                  "outputs/cell_cells_58_outputs_7_data_text_html_11_1_b620ba7d9a.png",
+                  "outputs/cell_cells_58_outputs_7_data_text_html_13_1_7233e39347.png",
+                  "outputs/cell_cells_58_outputs_7_data_text_html_15_1_a7f6da24b6.png",
+                ]),
+              },
+            ],
+          },
+          {
+            type: "subsection",
+            title: "Optional upsampling cell",
+            note: "The final optional cell upsamples the most recent hybrid image to 256x256 with Stage 2.",
+            content: [
+              {
+                type: "grid",
+                cols: 1,
+                cards: [
+                  {
+                    src: "outputs/cell_cells_60_outputs_2_data_text_html_3_1_00a4c0dabd.png",
+                    badge: "256x256",
+                    title: "Upsampled hybrid image",
+                    caption:
+                      "Stage 2 upsampled hybrid image produced by the optional upsampling helper cell.",
+                  },
+                ],
               },
             ],
           },
@@ -721,51 +1473,61 @@
       }
 
       function renderCard(card, wide = false) {
-        const imageOnly = Boolean(card.imageOnly);
-        const description = card.description
-          ? `<p>${escapeHtml(card.description)}</p>`
-          : "";
         const badge = card.badge
           ? `<span class="figure-badge">${escapeHtml(card.badge)}</span>`
           : "";
-        const topLabel = card.topLabel
-          ? `<p class="image-only-label">${escapeHtml(card.topLabel)}</p>`
+        const summary = card.summary
+          ? `<p>${escapeHtml(card.summary)}</p>`
           : "";
-        const body = imageOnly
-          ? `${topLabel}`
-          : `<h4>${escapeHtml(card.title)}</h4>${description}`;
 
         return `
           <article class="figure-card${wide ? " wide" : ""}" data-title="${escapeHtml(card.title)}" data-caption="${escapeHtml(card.caption || "")}" data-src="${escapeHtml(card.src)}">
-            ${topLabel}
-            <div class="figure-media-wrap">
-              <div class="figure-media">
-                ${badge}
-                <img src="${escapeHtml(card.src)}" alt="${escapeHtml(card.alt || card.title)}" />
-              </div>
+            <div class="figure-media">
+              ${badge}
+              <img src="${escapeHtml(card.src)}" alt="${escapeHtml(card.title)}" />
             </div>
-            ${imageOnly ? "" : body}
+            <h5>${escapeHtml(card.title)}</h5>
+            ${summary}
           </article>
         `;
       }
 
+      function renderBlock(block) {
+        if (block.type === "grid") {
+          const cards = (block.cards || [])
+            .map((card) => renderCard(card))
+            .join("");
+          return `<div class="card-grid" style="--cols: ${block.cols || 2};">${cards}</div>`;
+        }
+
+        if (block.type === "wide") {
+          return renderCard(block, true);
+        }
+
+        if (block.type === "subsection") {
+          const content = (block.content || []).map(renderBlock).join("");
+          const note = block.note ? `<p>${escapeHtml(block.note)}</p>` : "";
+          return `
+            <section class="subsection">
+              <div class="subsection-header">
+                <h4>${escapeHtml(block.title)}</h4>
+                ${note}
+              </div>
+              <div class="subsection-content">${content}</div>
+            </section>
+          `;
+        }
+
+        return "";
+      }
+
       function renderGallery(galleryId, blocks) {
         const gallery = document.getElementById(galleryId);
-        if (!gallery) return;
+        if (!gallery) {
+          return;
+        }
 
-        const html = blocks
-          .map((block) => {
-            if (block.type === "grid") {
-              const cards = block.cards
-                .map((card) => renderCard(card))
-                .join("");
-              return `<div class="card-grid" style="--cols: ${block.cols || 2};">${cards}</div>`;
-            }
-            return renderCard(block, true);
-          })
-          .join("");
-
-        gallery.innerHTML = html;
+        gallery.innerHTML = blocks.map(renderBlock).join("");
       }
 
       Object.entries(figureSections).forEach(([galleryId, blocks]) => {
@@ -806,18 +1568,24 @@
         });
         card.tabIndex = 0;
         card.setAttribute("role", "button");
-        card.setAttribute("aria-label", "Open figure");
+        card.setAttribute(
+          "aria-label",
+          `Open ${card.getAttribute("data-title") || "figure"}`,
+        );
       });
 
       modal.addEventListener("click", (event) => {
-        if (event.target === modal) closeModal();
+        if (event.target === modal) {
+          closeModal();
+        }
       });
 
       modalClose.addEventListener("click", closeModal);
 
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && modal.classList.contains("open"))
+        if (event.key === "Escape" && modal.classList.contains("open")) {
           closeModal();
+        }
       });
     </script>
   </body>
