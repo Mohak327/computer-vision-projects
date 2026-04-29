@@ -1,275 +1,262 @@
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Part A Results</title>
+    <title>Project 5 - Combined Demo</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+
       :root {
-        --bg: #0b1020;
-        --bg-soft: #11172b;
-        --panel: rgba(14, 20, 39, 0.78);
-        --panel-border: rgba(255, 255, 255, 0.08);
-        --text: #edf2ff;
-        --muted: #aeb9d6;
-        --accent: #7dd3fc;
-        --accent-2: #f59e0b;
-        --accent-3: #34d399;
-        --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+        --bg: #faf9f7;
+        --surface: #ffffff;
+        --border: #ddd9d3;
+        --text: #1a1815;
+        --muted: #6b6560;
+        --accent: #1a4f7a;
+        --accent-light: #e8f0f7;
+        --tag-bg: #f2f0ec;
+        --rule: #c8c4be;
+        --shadow: 0 4px 18px rgba(0,0,0,0.08);
+        --panel: rgba(255,255,255,0.9);
+        --panel-border: rgba(0,0,0,0.09);
         --max: 1280px;
       }
 
-      * {
-        box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
 
       body {
         margin: 0;
+        background: var(--bg);
         color: var(--text);
-        background:
-          radial-gradient(
-            circle at top left,
-            rgba(125, 211, 252, 0.22),
-            transparent 32%
-          ),
-          radial-gradient(
-            circle at top right,
-            rgba(245, 158, 11, 0.17),
-            transparent 28%
-          ),
-          radial-gradient(
-            circle at bottom center,
-            rgba(52, 211, 153, 0.12),
-            transparent 38%
-          ),
-          linear-gradient(180deg, #070b16 0%, #0c1224 45%, #0a0f1d 100%);
-        font-family: "Segoe UI", "Trebuchet MS", "Aptos", sans-serif;
-        line-height: 1.55;
-        min-height: 100vh;
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.12;
-        background-image:
-          linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-        background-size: 42px 42px;
-        mask-image: linear-gradient(
-          180deg,
-          rgba(0, 0, 0, 0.18),
-          rgba(0, 0, 0, 0.8)
-        );
+        font-family: 'EB Garamond', Georgia, serif;
+        line-height: 1.6;
       }
 
       .page {
-        position: relative;
-        z-index: 1;
         max-width: var(--max);
         margin: 0 auto;
-        padding: 28px 20px 56px;
+        padding: 36px 20px 64px;
       }
 
+      /* ── Top header ───────────────────────────────── */
       .topbar {
-        position: sticky;
-        top: 14px;
-        z-index: 20;
-        backdrop-filter: blur(16px);
-        background: rgba(8, 12, 24, 0.68);
-        border: 1px solid var(--panel-border);
-        border-radius: 999px;
-        padding: 12px 18px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        box-shadow: var(--shadow);
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--text);
+        margin-bottom: 36px;
+        flex-wrap: wrap;
       }
 
       .brand {
         display: flex;
         align-items: center;
         gap: 12px;
-        min-width: 0;
       }
 
       .brand-mark {
         width: 38px;
         height: 38px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        box-shadow: 0 10px 25px rgba(125, 211, 252, 0.2);
+        background: var(--text);
+        clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
         flex: 0 0 auto;
       }
 
       .brand h1 {
         margin: 0;
-        font-size: 0.98rem;
-        letter-spacing: 0.08em;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.88rem;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
 
       .nav {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        justify-content: flex-end;
+        gap: 8px;
       }
 
       .nav a {
         color: var(--muted);
         text-decoration: none;
-        font-size: 0.9rem;
-        padding: 7px 11px;
-        border-radius: 999px;
-        transition: all 160ms ease;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.76rem;
+        padding: 6px 10px;
+        border-radius: 3px;
+        border: 1px solid transparent;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
 
       .nav a:hover {
         color: var(--text);
-        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--border);
+        background: var(--surface);
       }
 
+      .print-btn { display: none; }
+
+      /* ── Part dividers ────────────────────────────── */
+      .part-divider {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin: 44px 0 28px;
+      }
+
+      .part-divider-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent);
+        white-space: nowrap;
+        padding: 6px 12px;
+        border: 1px solid var(--accent-light);
+        background: var(--accent-light);
+        border-radius: 3px;
+      }
+
+      .part-divider-line {
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      /* ── Hero blocks ──────────────────────────────── */
       .hero {
-        margin-top: 24px;
-        padding: 34px;
-        border-radius: 32px;
-        background:
-          linear-gradient(
-            145deg,
-            rgba(18, 25, 48, 0.95),
-            rgba(10, 16, 31, 0.92)
-          ),
-          radial-gradient(
-            circle at top right,
-            rgba(125, 211, 252, 0.16),
-            transparent 30%
-          );
-        border: 1px solid var(--panel-border);
+        margin-top: 0;
+        padding: 28px 30px;
+        border-radius: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
         box-shadow: var(--shadow);
-        overflow: hidden;
-        position: relative;
+        overflow: visible;
+        position: static;
+        margin-bottom: 24px;
       }
 
-      .hero::after {
-        content: "";
-        position: absolute;
-        inset: -2px;
-        background:
-          radial-gradient(
-            circle at 15% 20%,
-            rgba(125, 211, 252, 0.16),
-            transparent 26%
-          ),
-          radial-gradient(
-            circle at 80% 20%,
-            rgba(245, 158, 11, 0.12),
-            transparent 24%
-          ),
-          radial-gradient(
-            circle at 70% 90%,
-            rgba(52, 211, 153, 0.08),
-            transparent 28%
-          );
-        pointer-events: none;
-      }
+      .hero::after { display: none !important; }
 
       .hero-grid {
-        position: relative;
         display: grid;
         grid-template-columns: 1.4fr 0.95fr;
         gap: 28px;
         align-items: start;
+        position: static;
       }
 
       .eyebrow {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 7px 12px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.06);
+        padding: 6px 11px;
+        border-radius: 3px;
+        background: var(--accent-light);
         color: var(--accent);
         text-transform: uppercase;
-        letter-spacing: 0.12em;
-        font-size: 0.76rem;
-        font-weight: 700;
-        margin-bottom: 18px;
+        letter-spacing: 0.1em;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.7rem;
+        font-weight: 500;
+        margin-bottom: 14px;
       }
 
       .hero h2 {
-        margin: 0 0 14px;
-        font-size: clamp(2.2rem, 4vw, 4.4rem);
-        line-height: 0.98;
-        letter-spacing: -0.04em;
-        max-width: 13ch;
+        margin: 0 0 12px;
+        font-size: clamp(1.8rem, 3vw, 3rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        max-width: 16ch;
+        color: var(--text);
       }
 
       .hero p {
         margin: 0;
         color: var(--muted);
         max-width: 68ch;
-        font-size: 1.03rem;
+        font-size: 1rem;
       }
 
       .chip-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 20px;
+        gap: 8px;
+        margin-top: 16px;
       }
 
       .chip {
-        border-radius: 999px;
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #d9e6ff;
-        font-size: 0.88rem;
+        border-radius: 3px;
+        padding: 5px 10px;
+        background: var(--tag-bg);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: 'DM Mono', monospace;
+        font-size: 0.74rem;
       }
 
       .summary-card {
-        border-radius: 24px;
-        padding: 22px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        padding: 20px;
+        background: var(--tag-bg);
+        border: 1px solid var(--border);
       }
 
       .summary-card h3 {
-        margin: 0 0 14px;
-        font-size: 1rem;
-        letter-spacing: 0.08em;
+        margin: 0 0 12px;
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #d9e6ff;
-      }
-
-      .summary-card p {
-        margin: 0 0 14px;
+        font-family: 'DM Mono', monospace;
         color: var(--muted);
       }
 
-      .summary-card p:last-child {
-        margin-bottom: 0;
+      .summary-card p {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 0.95rem;
       }
 
+      .summary-card p:last-child { margin-bottom: 0; }
+
+      /* ── Metric grid (Part B hero) ─────────────────── */
+      .metric-grid { display: grid; gap: 10px; }
+
+      .metric {
+        padding: 12px 14px;
+        border-radius: 4px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: var(--text);
+        font-family: 'EB Garamond', serif;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      /* ── Gallery sections ─────────────────────────── */
       .section {
-        margin-top: 28px;
-        padding: 26px;
-        border-radius: 28px;
-        background: var(--panel);
-        border: 1px solid var(--panel-border);
+        margin-top: 20px;
+        padding: 24px;
+        border-radius: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
         box-shadow: var(--shadow);
-        backdrop-filter: blur(18px);
+        backdrop-filter: none;
       }
 
       .section-header {
@@ -279,99 +266,100 @@
         justify-content: space-between;
         gap: 12px;
         margin-bottom: 18px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
       }
 
       .section-header h3 {
         margin: 0;
-        font-size: 1.55rem;
-        letter-spacing: -0.02em;
+        font-size: 1.4rem;
+        letter-spacing: -0.01em;
+        color: var(--text);
       }
 
       .section-header p {
-        margin: 0;
+        margin: 4px 0 0;
         color: var(--muted);
         max-width: 76ch;
+        font-size: 0.95rem;
+        font-style: italic;
       }
 
       .gallery {
         display: flex;
         flex-direction: column;
-        gap: 18px;
+        gap: 16px;
       }
 
+      /* ── Subsections (Part A) ─────────────────────── */
       .subsection {
-        padding: 18px;
-        border-radius: 24px;
-        background: rgba(255, 255, 255, 0.035);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 16px;
+        border-radius: 6px;
+        background: var(--tag-bg);
+        border: 1px solid var(--border);
       }
 
       .subsection-header {
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
 
       .subsection-header h4 {
-        margin: 0 0 6px;
-        font-size: 1.12rem;
-        letter-spacing: -0.01em;
+        margin: 0 0 4px;
+        font-size: 1.05rem;
+        color: var(--text);
       }
 
       .subsection-header p {
         margin: 0;
         color: var(--muted);
-        font-size: 0.95rem;
-        /* max-width: 74ch; */
+        font-size: 0.88rem;
+        font-style: italic;
       }
 
       .subsection-content {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 14px;
       }
 
+      /* ── Figure cards ─────────────────────────────── */
       .card-grid {
         display: grid;
         grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
-        gap: 18px;
+        gap: 14px;
       }
 
       .figure-card {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        padding: 14px;
-        border-radius: 22px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 10px;
+        padding: 12px;
+        border-radius: 6px;
+        background: var(--surface);
+        border: 1px solid var(--border);
         cursor: pointer;
-        transition:
-          transform 180ms ease,
-          border-color 180ms ease,
-          background 180ms ease;
+        transition: border-color 140ms ease, box-shadow 140ms ease;
         min-height: 100%;
       }
 
       .figure-card:hover {
-        transform: translateY(-3px);
-        border-color: rgba(125, 211, 252, 0.35);
-        background: rgba(255, 255, 255, 0.06);
+        border-color: var(--accent);
+        box-shadow: 0 2px 12px rgba(26,79,122,0.1);
       }
 
-      .figure-card.wide {
-        width: 100%;
-      }
+      .figure-card.wide { width: 100%; }
 
       .figure-media {
         position: relative;
-        border-radius: 18px;
+        border-radius: 4px;
         overflow: hidden;
-        background: #f4f7fb;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--tag-bg);
+        border: 1px solid var(--border);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px;
-        min-height: 120px;
+        padding: 8px;
+        min-height: 100px;
       }
 
       .figure-media img {
@@ -381,109 +369,76 @@
         max-height: 100%;
         display: block;
         object-fit: contain;
-        object-position: center;
       }
 
       .figure-badge {
         position: absolute;
-        top: 12px;
-        left: 12px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(9, 13, 24, 0.82);
+        top: 8px;
+        left: 8px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        background: rgba(26,79,122,0.85);
         color: white;
-        font-size: 0.73rem;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.66rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
+      .figure-card h4,
       .figure-card h5 {
         margin: 0;
-        font-size: 0.98rem;
-        line-height: 1.3;
+        font-size: 0.92rem;
+        font-weight: 600;
+        line-height: 1.35;
+        color: var(--text);
       }
 
       .figure-card p {
         margin: 0;
         color: var(--muted);
-        font-size: 0.93rem;
+        font-size: 0.88rem;
+        line-height: 1.45;
       }
 
-      .modal {
-        position: fixed;
-        inset: 0;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: rgba(3, 6, 14, 0.84);
-        backdrop-filter: blur(14px);
-        z-index: 100;
+      /* ── Insight callouts (Part B) ────────────────── */
+      .insight {
+        margin-top: 14px;
+        padding: 16px 18px;
+        border-radius: 6px;
+        background: var(--accent-light);
+        border: 1px solid rgba(26,79,122,0.2);
+        color: var(--text);
       }
 
-      .modal.open {
-        display: flex;
+      .insight strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.88rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-family: 'DM Mono', monospace;
+        color: var(--accent);
       }
 
-      .modal-panel {
-        width: min(1200px, 100%);
-        max-height: 92vh;
-        overflow: auto;
-        border-radius: 28px;
-        background: #0d1428;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55);
-        padding: 18px;
-      }
+      .insight p, .insight span { font-size: 0.95rem; color: var(--muted); }
 
-      .modal-top {
+      /* ── Footer ───────────────────────────────────── */
+      .footer-note {
+        margin-top: 40px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-        gap: 16px;
-        align-items: start;
-        margin-bottom: 16px;
+        gap: 12px;
+        flex-wrap: wrap;
       }
 
-      .modal-top h3 {
-        margin: 0 0 6px;
-        font-size: 1.25rem;
-      }
-
-      .modal-top p {
-        margin: 0;
+      .footer-note, .footer-note p {
+        font-family: 'DM Mono', monospace;
+        font-size: 0.75rem;
         color: var(--muted);
-      }
-
-      .close-btn {
-        appearance: none;
-        border: 0;
-        cursor: pointer;
-        color: var(--text);
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 999px;
-        width: 42px;
-        height: 42px;
-        font-size: 1.2rem;
-        line-height: 1;
-      }
-
-      .modal-img {
-        width: auto;
-        height: auto;
-        max-width: 100%;
-        max-height: 76vh;
-        object-fit: contain;
-        object-position: center;
-        display: block;
-        border-radius: 20px;
-        background: #f7f9fc;
-      }
-
-      .footer-note {
-        margin-top: 18px;
-        color: var(--muted);
-        font-size: 0.92rem;
-        text-align: center;
+        text-align: left;
       }
 
       .footer-note a {
@@ -495,120 +450,123 @@
         text-decoration: underline;
       }
 
+      /* ── Modal ────────────────────────────────────── */
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(10,10,10,0.7);
+        backdrop-filter: blur(6px);
+        z-index: 100;
+      }
+
+      .modal.open { display: flex; }
+
+      .modal-panel {
+        width: min(1200px, 100%);
+        max-height: 92vh;
+        overflow: auto;
+        border-radius: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+        padding: 20px;
+      }
+
+      .modal-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: start;
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-top h3 {
+        margin: 0 0 4px;
+        font-size: 1.15rem;
+        color: var(--text);
+      }
+
+      .modal-top p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+      .close-btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        color: var(--text);
+        background: var(--tag-bg);
+        border-radius: 3px;
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+        line-height: 1;
+        flex: 0 0 auto;
+      }
+
+      .modal-img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 78vh;
+        object-fit: contain;
+        display: block;
+        border-radius: 4px;
+        background: var(--tag-bg);
+        margin: 0 auto;
+      }
+
+      /* ── Print styles ─────────────────────────────── */
+      @media print {
+        body { background: white; }
+        .modal { display: none !important; }
+        .section, .hero, .subsection, .figure-card { break-inside: avoid; }
+      }
+
       @media (max-width: 920px) {
-        .hero-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .topbar {
-          border-radius: 24px;
-          align-items: flex-start;
-        }
-
-        .nav {
-          justify-content: flex-start;
-        }
-
-        .hero,
-        .section {
-          padding: 20px;
-          border-radius: 24px;
-        }
-
-        .modal-panel {
-          padding: 14px;
-        }
-
-        .modal-img {
-          max-height: 66vh;
-        }
+        .hero-grid { grid-template-columns: 1fr; }
       }
 
       @media (max-width: 620px) {
-        .page {
-          padding: 16px 12px 40px;
-        }
-
-        .topbar {
-          position: static;
-          border-radius: 22px;
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .hero {
-          margin-top: 18px;
-        }
-
-        .card-grid {
-          grid-template-columns: 1fr;
-        }
+        .page { padding: 16px 12px 40px; }
+        .card-grid { grid-template-columns: 1fr; }
       }
     </style>
   </head>
   <body>
     <div class="page">
+
       <header class="topbar">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true"></div>
-          <h1>Part A Results</h1>
+          <h1>Project 5 — Combined Demo</h1>
         </div>
-        <nav class="nav" aria-label="Section navigation">
-          <a href="#setup">Setup</a>
-          <a href="#sampling">Sampling Loops</a>
-          <a href="#generation">Sampling + CFG</a>
-          <a href="#translation">Image Editing</a>
-          <a href="#compositions">Compositions</a>
-          <a href="#optional">Optional</a>
-        </nav>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <nav class="nav" aria-label="Section navigation">
+            <a href="#setup">Part A</a>
+            <a href="#overview">Part B</a>
+            <a href="#source-link">Source</a>
+          </nav>
+          <button class="print-btn" onclick="window.print()">⬜ Save as PDF</button>
+        </div>
       </header>
 
-      <section class="hero">
-        <div class="hero-grid">
-          <div>
-            <div class="eyebrow">Project 5A: Diffusion Sampling Loops</div>
-            <h2>
-              From noisy images to guided edits, visual anagrams, and hybrids.
-            </h2>
-            <p>
-              Part A explores pretrained DeepFloyd diffusion models through
-              forward noising, classical and learned denoising, iterative
-              sampling, classifier-free guidance, image-to-image translation,
-              inpainting, visual anagrams, and hybrid-image generation.
-            </p>
-            <div class="chip-row" aria-label="Page summary">
-              <span class="chip">Part 0 Setup</span>
-              <span class="chip">Sampling + CFG</span>
-              <span class="chip">Editing + Inpainting</span>
-              <span class="chip">Anagrams + Hybrids</span>
-            </div>
-          </div>
-          <aside class="summary-card">
-            <h3>What To Notice</h3>
-            <p>
-              Early sections compare simple Gaussian denoising against learned
-              denoising and show why iterative reverse diffusion works better
-              than a single denoising step.
-            </p>
-            <p>
-              CFG improves sample quality, while increasing `i_start` in the
-              translation sections allows larger edits to the original image.
-            </p>
-            <p>
-              The later sections push the same diffusion machinery into more
-              creative tasks: inpainting, prompt-guided edits, visual anagrams,
-              hybrid images, and optional upsampling experiments.
-            </p>
-          </aside>
-        </div>
-      </section>
+      <!-- ── PART A ───────────────────────────────────── -->
+      <div class="part-divider">
+        <span class="part-divider-label">Part A — Diffusion Sampling Loops</span>
+        <span class="part-divider-line"></span>
+      </div>
 
-      <section class="section" id="setup">
+<section class="section" id="setup">
         <div class="section-header">
           <div>
             <h3>Part 0: Setup</h3>
             <p>
-              Initial DeepFloyd samples from Cell 15: Stage 1 outputs, Stage 2
+              Initial DeepFloyd samples from Stage 1 outputs, Stage 2
               upsampling, and the 5-step versus 50-step comparison for the first
               prompt.
             </p>
@@ -616,8 +574,7 @@
         </div>
         <div class="gallery" id="setupGallery"></div>
       </section>
-
-      <section class="section" id="sampling">
+<section class="section" id="sampling">
         <div class="section-header">
           <div>
             <h3>Part 1: Sampling Loops</h3>
@@ -630,8 +587,7 @@
         </div>
         <div class="gallery" id="samplingGallery"></div>
       </section>
-
-      <section class="section" id="generation">
+<section class="section" id="generation">
         <div class="section-header">
           <div>
             <h3>Part 1.5-1.6: Diffusion Sampling and CFG</h3>
@@ -643,8 +599,7 @@
         </div>
         <div class="gallery" id="generationGallery"></div>
       </section>
-
-      <section class="section" id="translation">
+<section class="section" id="translation">
         <div class="section-header">
           <div>
             <h3>Part 1.7: Image-to-Image Translation</h3>
@@ -657,8 +612,7 @@
         </div>
         <div class="gallery" id="translationGallery"></div>
       </section>
-
-      <section class="section" id="compositions">
+<section class="section" id="compositions">
         <div class="section-header">
           <div>
             <h3>Part 1.8-1.9: Visual Compositions</h3>
@@ -670,8 +624,7 @@
         </div>
         <div class="gallery" id="compositionsGallery"></div>
       </section>
-
-      <section class="section" id="optional">
+<section class="section" id="optional">
         <div class="section-header">
           <div>
             <h3>Part 2: Bells &amp; Whistles</h3>
@@ -683,29 +636,167 @@
         </div>
         <div class="gallery" id="optionalGallery"></div>
       </section>
+<section class="subsection">
+              <div class="subsection-header">
+                <h4>${escapeHtml(block.title)}</h4>
+                ${note}
+              </div>
+              <div class="subsection-content">${content}</div>
+            </section>
+
+      <!-- ── PART B ───────────────────────────────────── -->
+      <div class="part-divider" style="margin-top:56px;">
+        <span class="part-divider-label">Part B — MNIST Denoising + Flow Matching</span>
+        <span class="part-divider-line"></span>
+      </div>
+
+<section class="hero" id="overview">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">MNIST denoising and flow matching</div>
+            <h2>From noisy digits to guided generation.</h2>
+            <p>
+              This page turns the notebook output into a compact story: a
+              single-step denoiser learns to recover clean digits, flow matching
+              learns to transform noise into samples over time, and class
+              conditioning makes the digits much more coherent. The gallery
+              below includes every saved figure from the notebook outputs
+              folder.
+            </p>
+            <div class="chip-row" aria-label="Key takeaways">
+              <span class="chip">14 saved figures</span>
+              <span class="chip">2 model families</span>
+              <span class="chip">3 sampling settings</span>
+              <span class="chip">10 training epochs</span>
+            </div>
+          </div>
+          <aside class="summary-card">
+            <h3>What to notice</h3>
+            <div class="metric-grid">
+              <div class="metric">
+                <strong>Fast loss collapse</strong>
+                <span
+                  >All three training curves drop sharply in the first few
+                  hundred iterations.</span
+                >
+              </div>
+              <div class="metric">
+                <strong>OOD noise degrades gracefully</strong>
+                <span
+                  >The denoiser works best around the training sigma and gets
+                  weaker as noise moves out of range.</span
+                >
+              </div>
+              <div class="metric">
+                <strong>Conditioning matters</strong>
+                <span
+                  >Class-conditioned flow matching produces much sharper,
+                  class-faithful digits than the unconditional version.</span
+                >
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+<section class="section" id="denoising">
+        <div class="section-header">
+          <div>
+            <h3>Part 1: Single-step Denoising UNet</h3>
+            <p>
+              The denoiser is trained on MNIST with Gaussian noise at sigma =
+              0.5. The figures below show how the model behaves as noise
+              increases, how training improves reconstruction, and where the
+              one-step assumption starts to break.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="denoisingGallery"></div>
+        <div class="insight">
+          <strong>Interpretation</strong>
+          The denoising UNet behaves like a reliable one-step editor rather than
+          a full generator. It excels at cleaning up inputs that resemble the
+          training distribution, but it cannot invent consistent digits from
+          arbitrary Gaussian noise.
+        </div>
+      </section>
+<section class="section" id="flow">
+        <div class="section-header">
+          <div>
+            <h3>Part 2: Flow Matching</h3>
+            <p>
+              This section switches from denoising to flow matching, where the
+              network learns a velocity field that transports noise toward data
+              over many small Euler steps.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="flowGallery"></div>
+        <div class="insight">
+          <strong>Interpretation</strong>
+          Flow matching is doing the right kind of work here: it learns a
+          continuous transport process instead of a one-shot reconstruction. The
+          training curve and samples together show that the model learns
+          directionality early, then slowly improves sample quality.
+        </div>
+      </section>
+<section class="section" id="class">
+        <div class="section-header">
+          <div>
+            <h3>Part 3: Class-Conditioned Flow Matching</h3>
+            <p>
+              Adding class labels plus classifier-free guidance makes the
+              sampling task far easier. The loss becomes smoother and the
+              generated digits become much more class-faithful.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="classGallery"></div>
+        <div class="insight">
+          <strong>Interpretation</strong>
+          Class conditioning changes the problem from vague generation to
+          targeted generation. With the label as an anchor, the model no longer
+          has to guess the digit class, so the sample quality jumps noticeably.
+        </div>
+      </section>
+<section class="section" id="scheduler">
+        <div class="section-header">
+          <div>
+            <h3>Part 4: Learning Rate Scheduler Comparison</h3>
+            <p>
+              The final experiment compares the class-conditioned run with and
+              without an exponential learning-rate scheduler. The curves are
+              close, and the sample grids remain strong in both settings.
+            </p>
+          </div>
+        </div>
+        <div class="gallery" id="schedulerGallery"></div>
+        <div class="insight">
+          <strong>Interpretation</strong>
+          To compensate for removing the scheduler, we used a smaller constant
+          learning rate (1e-3) with Adam instead of the more aggressive
+          scheduled setup. This keeps updates stable throughout training,
+          reduces late-epoch oscillation, and still reaches comparable loss and
+          sample quality in this experiment.
+        </div>
+      </section>
 
       <div class="footer-note">
-        All figures on this page come from the saved outputs associated with
-        `part_a/part_5a.ipynb`.
-        <a href="https://github.com/Mohak327/computer-vision-projects/tree/HW5" target="_blank" rel="noopener noreferrer">GitHub source (includes all images)</a>
+        <p>Project 5 · Part A &amp; Part B combined demo</p>
+        <p>All figures loaded from local notebook outputs</p>
+        <p><a id="source-link" href="https://github.com/Mohak327/computer-vision-projects/tree/HW5" target="_blank" rel="noopener noreferrer">GitHub source (includes all images)</a></p>
       </div>
+
     </div>
 
+    <!-- Shared modal -->
     <div class="modal" id="imageModal" aria-hidden="true">
-      <div
-        class="modal-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modalTitle"
-      >
+      <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-top">
           <div>
             <h3 id="modalTitle">Figure title</h3>
             <p id="modalCaption">Figure caption</p>
           </div>
-          <button class="close-btn" id="modalClose" aria-label="Close figure">
-            &times;
-          </button>
+          <button class="close-btn" id="modalClose" aria-label="Close figure">&times;</button>
         </div>
         <img class="modal-img" id="modalImage" alt="Expanded figure" />
       </div>
@@ -731,11 +822,12 @@
           caption: `Saved reverse-diffusion trajectory snapshot at step ${TRAJECTORY_STEPS[index]}.`,
         }));
 
-      const figureSections = {
+      // Part A figure data
+      const figureSectionsA = {
         setupGallery: [
           {
             type: "subsection",
-            title: "Cell 15 - Stage 1 sampling outputs",
+            title: "Stage 1 sampling outputs",
             note: "Three prompt-conditioned Stage 1 samples at 64x64.",
             content: [
               {
@@ -769,7 +861,7 @@
           },
           {
             type: "subsection",
-            title: "Cell 15 - Stage 2 upsampling outputs",
+            title: "Stage 2 upsampling outputs",
             note: "The same three prompts after Stage 2 upsampling to 256x256.",
             content: [
               {
@@ -803,7 +895,7 @@
           },
           {
             type: "subsection",
-            title: "Cell 15 - Inference-step comparison",
+            title: "Inference-step comparison",
             note: "The notebook reruns the first prompt at 5 steps and 50 steps for a direct comparison.",
             content: [
               {
@@ -1527,6 +1619,190 @@
         ],
       };
 
+      // Part B figure data
+      const figureSectionsB = {
+        denoisingGallery: [
+          {
+            type: "wide",
+            badge: "Noise sweep",
+            src: "outputs/cell12_output02.png",
+            alt: "Visualizing Different Noise Levels",
+            title: "Visualizing Different Noise Levels",
+            caption:
+              "Input digit 7 corrupted with increasing Gaussian noise from sigma = 0.0 to 1.0.",
+            description:
+              "The clean digit is easy to read at low sigma, but the structure starts to dissolve quickly once noise rises above the training regime."
+          },
+          {
+            type: "grid",
+            cols: 2,
+            cards: [
+              {
+                badge: "Epoch 1",
+                src: "outputs/cell20_output01.png",
+                alt: "Denoising Results after Epoch 1",
+                title: "Denoising Results after Epoch 1",
+                caption: "Clean, noisy, and denoised digits after the first epoch.",
+                description:
+                  "The network already reconstructs the obvious digit structure, but some examples still carry grain and stroke roughness."
+              },
+              {
+                badge: "Epoch 5",
+                src: "outputs/cell20_output02.png",
+                alt: "Denoising Results after Epoch 5",
+                title: "Denoising Results after Epoch 5",
+                caption: "The same reconstruction grid after the final training epoch.",
+                description:
+                  "By the end of training, the denoised outputs are cleaner and more stable. The model does not radically change the easy examples, but it removes a little more noise and preserves the digit identity more consistently."
+              }
+            ]
+          },
+          {
+            type: "wide",
+            badge: "Loss curve",
+            src: "outputs/cell18_output01.png",
+            alt: "Training Loss Curve sigma 0.5",
+            title: "Training Loss Curve",
+            caption: "The MSE loss falls rapidly and then flattens into a low-error regime.",
+            description:
+              "The model learns the broad denoising mapping almost immediately, then spends the rest of training tightening the details."
+          },
+          {
+            type: "grid",
+            cols: 2,
+            cards: [
+              {
+                badge: "OOD test",
+                src: "outputs/cell22_output01.png",
+                alt: "Out-of-Distribution Noise Testing",
+                title: "Out-of-Distribution Noise Testing",
+                caption:
+                  "The model is tested on the same digit across a wider sigma range than it was trained on.",
+                description:
+                  "The denoiser remains strong near sigma = 0.5, but the reconstruction quality drops when the corrupted input strays too far from the training distribution."
+              },
+              {
+                badge: "Pure noise",
+                src: "outputs/cell24_output01.png",
+                alt: "Denoising Pure Gaussian Noise",
+                title: "Denoising Pure Gaussian Noise",
+                caption:
+                  "A one-step pass on pure noise reveals how far the learned prior can be pushed.",
+                description:
+                  "When the input contains no digit structure at all, the network hallucinates digit-like blobs. That is useful evidence that it learned a strong prior, but it is not yet a true generative sampler."
+              }
+            ]
+          }
+        ],
+        flowGallery: [
+          {
+            type: "wide",
+            badge: "Time-conditioned",
+            src: "outputs/cell35_output12.png",
+            alt: "Time-conditioned UNet Training Loss",
+            title: "Time-conditioned UNet Training Loss",
+            caption:
+              "The optimized training run for the time-conditioned UNet drops from a large initial spike to a low, flat regime.",
+            description:
+              "The flow-matching objective converges quickly once the model learns to use the time embedding, which is what you want for stable sampling."
+          },
+          {
+            type: "wide",
+            badge: "Epoch 1 samples",
+            src: "outputs/cell38_output01.png",
+            alt: "Unconditional Flow Matching Samples Epoch 1",
+            title: "Unconditional Flow Matching Samples - Epoch 1",
+            caption: "Samples generated with the time-conditioned model after one epoch."
+          },
+          {
+            type: "wide",
+            badge: "Epoch 5 samples",
+            src: "outputs/cell38_output02.png",
+            alt: "Unconditional Flow Matching Samples Epoch 5",
+            title: "Unconditional Flow Matching Samples - Epoch 5",
+            caption: "Samples generated with the time-conditioned model after five epochs."
+          },
+          {
+            type: "wide",
+            badge: "Epoch 10 samples",
+            src: "outputs/cell38_output03.png",
+            alt: "Unconditional Flow Matching Samples Epoch 10",
+            title: "Unconditional Flow Matching Samples - Epoch 10",
+            caption: "Samples generated with the time-conditioned model after ten epochs."
+          }
+        ],
+        classGallery: [
+          {
+            type: "wide",
+            badge: "Class-conditioned",
+            src: "outputs/cell45_output02.png",
+            alt: "Class-conditioned UNet Training Loss",
+            title: "Class-conditioned UNet Training Loss",
+            caption:
+              "The class-conditioned run also drops sharply, with small bumps from classifier-free dropout.",
+            description:
+              "The loss curve is similarly steep at the beginning, which suggests the model quickly learns to use the class signal as an anchor for the flow."
+          },
+          {
+            type: "grid",
+            cols: 3,
+            cards: [
+              {
+                badge: "Epoch 1",
+                src: "outputs/cell48_output01.png",
+                alt: "Class-conditioned Samples Epoch 1",
+                title: "Class-conditioned Samples - Epoch 1",
+                caption:
+                  "Early samples already capture digit identity, but some rows still look rough or partially collapsed.",
+                description:
+                  "Even this early, the conditional model has a much stronger sense of class structure than the unconditional sampler."
+              },
+              {
+                badge: "Epoch 5",
+                src: "outputs/cell48_output02.png",
+                alt: "Class-conditioned Samples Epoch 5",
+                title: "Class-conditioned Samples - Epoch 5",
+                caption: "The digits are sharper and the class structure is much more reliable.",
+                description:
+                  "By epoch 5 the model is producing clean, readable samples across the digit classes with only minor stylistic variation."
+              },
+              {
+                badge: "Epoch 10",
+                src: "outputs/cell48_output03.png",
+                alt: "Class-conditioned Samples Epoch 10",
+                title: "Class-conditioned Samples - Epoch 10",
+                caption: "The final samples are crisp, consistent, and strongly tied to their label.",
+                description:
+                  "These outputs are the clearest evidence that the class-conditioning and guidance setup is working: each row looks like the requested digit, and the samples are much less noisy than the unconditional ones."
+              }
+            ]
+          }
+        ],
+        schedulerGallery: [
+          {
+            type: "wide",
+            badge: "Loss comparison",
+            src: "outputs/cell50_output02.png",
+            alt: "Training Loss With vs Without LR Scheduler",
+            title: "Training Loss: With vs Without LR Scheduler",
+            caption:
+              "The scheduled and constant-LR runs converge to very similar low-loss regimes.",
+            description:
+              "The exponential decay helps keep the run tidy, but the constant learning-rate baseline is already strong enough to reach comparable loss values."
+          },
+          {
+            type: "wide",
+            badge: "Constant lr = 1e-3",
+            src: "outputs/cell50_output03.png",
+            alt: "Class-conditioned Samples No LR Scheduler",
+            title: "Class-conditioned Samples - No LR Scheduler",
+            caption: "A constant learning rate still yields crisp digit classes after training.",
+            description:
+              "The sample quality stays high without the scheduler, which suggests that the conditioning strategy and base optimizer setup matter more than the exact decay schedule for this experiment."
+          }
+        ]
+      };
+
       const modal = document.getElementById("imageModal");
       const modalTitle = document.getElementById("modalTitle");
       const modalCaption = document.getElementById("modalCaption");
@@ -1535,91 +1811,77 @@
 
       function escapeHtml(value) {
         return String(value).replace(/[&<>"']/g, (char) => {
-          const chars = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;",
-          };
+          const chars = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
           return chars[char];
         });
       }
 
-      function renderCard(card, wide = false) {
-        const badge = card.badge
-          ? `<span class="figure-badge">${escapeHtml(card.badge)}</span>`
-          : "";
-        const summary = card.summary
-          ? `<p>${escapeHtml(card.summary)}</p>`
-          : "";
+      function prefixFigurePaths(blocks, prefix) {
+        (blocks || []).forEach((block) => {
+          if (block.src && block.src.startsWith("outputs/")) {
+            block.src = `${prefix}${block.src}`;
+          }
 
+          if (block.cards) {
+            block.cards.forEach((card) => {
+              if (card.src && card.src.startsWith("outputs/")) {
+                card.src = `${prefix}${card.src}`;
+              }
+            });
+          }
+
+          if (block.content) {
+            prefixFigurePaths(block.content, prefix);
+          }
+        });
+      }
+
+      function renderCard(card, wide = false) {
+        const badge = card.badge ? `<span class="figure-badge">${escapeHtml(card.badge)}</span>` : "";
+        const desc = card.description ? `<p>${escapeHtml(card.description)}</p>` : (card.summary ? `<p>${escapeHtml(card.summary)}</p>` : "");
         return `
-          <article class="figure-card${wide ? " wide" : ""}" data-title="${escapeHtml(card.title)}" data-caption="${escapeHtml(card.caption || "")}" data-src="${escapeHtml(card.src)}">
+          <article class="figure-card${wide ? " wide" : ""}" data-title="${escapeHtml(card.title || "")}" data-caption="${escapeHtml(card.caption || "")}" data-src="${escapeHtml(card.src || "")}">
             <div class="figure-media">
               ${badge}
-              <img src="${escapeHtml(card.src)}" alt="${escapeHtml(card.title)}" />
+              <img src="${escapeHtml(card.src || "")}" alt="${escapeHtml(card.alt || card.title || "")}" loading="lazy" />
             </div>
-            <h5>${escapeHtml(card.title)}</h5>
-            ${summary}
-          </article>
-        `;
+            <h5>${escapeHtml(card.title || "")}</h5>
+            ${desc}
+          </article>`;
       }
 
       function renderBlock(block) {
         if (block.type === "grid") {
-          const cards = (block.cards || [])
-            .map((card) => renderCard(card))
-            .join("");
+          const cards = (block.cards || []).map(c => renderCard(c)).join("");
           return `<div class="card-grid" style="--cols: ${block.cols || 2};">${cards}</div>`;
         }
-
-        if (block.type === "wide") {
-          return renderCard(block, true);
-        }
-
+        if (block.type === "wide") return renderCard(block, true);
         if (block.type === "subsection") {
           const content = (block.content || []).map(renderBlock).join("");
           const note = block.note ? `<p>${escapeHtml(block.note)}</p>` : "";
-          return `
-            <section class="subsection">
-              <div class="subsection-header">
-                <h4>${escapeHtml(block.title)}</h4>
-                ${note}
-              </div>
-              <div class="subsection-content">${content}</div>
-            </section>
-          `;
+          return `<section class="subsection"><div class="subsection-header"><h4>${escapeHtml(block.title)}</h4>${note}</div><div class="subsection-content">${content}</div></section>`;
         }
-
         return "";
       }
 
       function renderGallery(galleryId, blocks) {
         const gallery = document.getElementById(galleryId);
-        if (!gallery) {
-          return;
-        }
-
+        if (!gallery) return;
         gallery.innerHTML = blocks.map(renderBlock).join("");
       }
 
-      Object.entries(figureSections).forEach(([galleryId, blocks]) => {
-        renderGallery(galleryId, blocks);
-      });
+      Object.values(figureSectionsA).forEach((blocks) => prefixFigurePaths(blocks, "part_a/"));
+      Object.values(figureSectionsB).forEach((blocks) => prefixFigurePaths(blocks, "part_b/"));
+
+      Object.entries(figureSectionsA).forEach(([id, blocks]) => renderGallery(id, blocks));
+      Object.entries(figureSectionsB).forEach(([id, blocks]) => renderGallery(id, blocks));
 
       function openModal(card) {
-        const title = card.getAttribute("data-title") || "";
-        const caption = card.getAttribute("data-caption") || "";
-        const src =
-          card.getAttribute("data-src") ||
-          card.querySelector("img")?.getAttribute("src") ||
-          "";
-
-        modalTitle.textContent = title;
-        modalCaption.textContent = caption;
+        modalTitle.textContent = card.getAttribute("data-title") || "";
+        modalCaption.textContent = card.getAttribute("data-caption") || "";
+        const src = card.getAttribute("data-src") || card.querySelector("img")?.getAttribute("src") || "";
         modalImage.src = src;
-        modalImage.alt = title;
+        modalImage.alt = modalTitle.textContent;
         modal.classList.add("open");
         modal.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
@@ -1632,35 +1894,13 @@
         modalImage.src = "";
       }
 
-      document.querySelectorAll(".figure-card").forEach((card) => {
-        card.addEventListener("click", () => openModal(card));
-        card.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            openModal(card);
-          }
-        });
-        card.tabIndex = 0;
-        card.setAttribute("role", "button");
-        card.setAttribute(
-          "aria-label",
-          `Open ${card.getAttribute("data-title") || "figure"}`,
-        );
+      document.addEventListener("click", e => {
+        const card = e.target.closest(".figure-card");
+        if (card) openModal(card);
       });
-
-      modal.addEventListener("click", (event) => {
-        if (event.target === modal) {
-          closeModal();
-        }
-      });
-
+      modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
       modalClose.addEventListener("click", closeModal);
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && modal.classList.contains("open")) {
-          closeModal();
-        }
-      });
+      document.addEventListener("keydown", e => { if (e.key === "Escape" && modal.classList.contains("open")) closeModal(); });
     </script>
   </body>
 </html>
